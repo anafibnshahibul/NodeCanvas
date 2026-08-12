@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NodeCanvas — Visual Builder</title>
+
+  <!-- Tailwind CSS (builder UI) -->
+  <link rel="stylesheet" href="/builder/builder.dist.css" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- HTMX -->
+  <script src="https://unpkg.com/htmx.org@2.0.3/dist/htmx.min.js" defer></script>
+  <!-- HTMX WebSockets Extension -->
+  <script src="https://unpkg.com/htmx.org@2.0.3/dist/ext/ws.js" defer></script>
+  <!-- HTMX SSE Extension -->
+  <script src="https://unpkg.com/htmx.org@2.0.3/dist/ext/sse.js" defer></script>
+
+  <!-- SortableJS (drag-and-drop backbone) -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" defer></script>
+
+  <!-- Builder Core Scripts (loaded after DOM) -->
+  <script type="module" src="/builder/js/canvas.js" defer></script>
+  <script type="module" src="/builder/js/stylePanel.js" defer></script>
+  <script type="module" src="/builder/js/layersPanel.js" defer></script>
+  <script type="module" src="/builder/js/elementLibrary.js" defer></script>
+  <script type="module" src="/builder/js/history.js" defer></script>
+  <script type="module" src="/builder/js/export.js" defer></script>
+</head>
+
+<body
+  class="h-full bg-[#0f1117] text-gray-100 font-inter overflow-hidden select-none"
+  hx-ext="ws"
+  ws-connect="/ws?project=__PROJECT_ID__"
+>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     TOP TOOLBAR
+═══════════════════════════════════════════════════════════════════════════ -->
+<header id="toolbar" class="flex items-center justify-between h-12 bg-[#1a1d27] border-b border-white/[0.06] px-4 z-50 relative shrink-0">
+
+  <!-- Left: Logo + Project Name -->
+  <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2">
+      <svg class="w-6 h-6 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+      </svg>
+      <span class="font-semibold text-sm text-white">NodeCanvas</span>
+    </div>
+    <div class="w-px h-5 bg-white/10"></div>
+    <input
+      id="project-name"
+      type="text"
+      value="Untitled Project"
+      class="bg-transparent text-sm text-gray-300 border-none outline-none focus:text-white transition-colors w-40"
+      hx-post="/api/projects/__PROJECT_ID__/rename"
+      hx-trigger="change"
+      hx-include="this"
+      name="name"
+    />
+  </div>
+
+  <!-- Center: Viewport Controls + Device Preview -->
+  <div class="flex items-center gap-1 bg-[#12141f] rounded-lg p-1">
+    <button data-viewport="desktop" onclick="setViewport('desktop')"
+      class="viewport-btn active flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all">
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      Desktop
+    </button>
+    <button data-viewport="tablet" onclick="setViewport('tablet')"
+      class="viewport-btn flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium text-gray-400 transition-all hover:text-white">
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+      Tablet
+    </button>
+    <button data-viewport="mobile" onclick="setViewport('mobile')"
+      class="viewport-btn flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium text-gray-400 transition-all hover:text-white">
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+      Mobile
+    </button>
+  </div>
+
+  <!-- Right: Undo/Redo, Preview, Export, Save -->
+  <div class="flex items-center gap-2">
+    <button id="btn-undo" onclick="window.history_undo()" title="Undo (Ctrl+Z)"
+      class="p-1.5 rounded hover:bg-white/10 text-gray-400 hover:text-white transition-all disabled:opacity-30" disabled>
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+    </button>
+    <button id="btn-redo" onclick="window.history_redo()" title="Redo (Ctrl+Shift+Z)"
+      class="p-1.5 rounded hover:bg-white/10 text-gray-400 hover:text-white transition-all disabled:opacity-30" disabled>
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10H11a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"/></svg>
+    </button>
+
+    <div class="w-px h-5 bg-white/10 mx-1"></div>
+
+    <button onclick="openPreview()"
+      class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-gray-300 hover:bg-white/10 transition-all">
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+      Preview
+    </button>
+
+    <!-- Export Dropdown -->
+    <div class="relative" id="export-menu-wrapper">
+      <button onclick="toggleExportMenu()"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-gray-300 hover:bg-white/10 transition-all">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Export
+        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div id="export-menu" class="hidden absolute right-0 top-full mt-1 w-52 bg-[#1e2130] border border-white/10 rounded-lg shadow-2xl z-50 py-1">
+        <button
+          class="w-full px-4 py-2 text-xs text-left text-gray-300 hover:bg-white/10 hover:text-white flex items-center gap-2"
+          hx-post="/api/export/__PROJECT_ID__/static"
+          hx-target="#export-status"
+          hx-indicator="#export-spinner">
+          <svg class="w-3.5 h-3.5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Static HTML/CSS/JS
+        </button>
+        <button
+          class="w-full px-4 py-2 text-xs text-left text-gray-300 hover:bg-white/10 hover:text-white flex items-center gap-2"
+          hx-post="/api/export/__PROJECT_ID__/wordpress"
+          hx-target="#export-status"
+          hx-indicator="#export-spinner">
+          <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          WordPress Theme
+        </button>
+        <button
+          class="w-full px-4 py-2 text-xs text-left text-gray-300 hover:bg-white/10 hover:text-white flex items-center gap-2"
+          hx-post="/api/export/__PROJECT_ID__/json"
+          hx-target="#export-status">
+          <svg class="w-3.5 h-3.5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Project JSON
+        </button>
+      </div>
+    </div>
+
+    <button
+      class="flex items-center gap-1.5 px-4 py-1.5 bg-violet-600 hover:bg-violet-500 rounded-md text-xs font-semibold text-white transition-all"
+      hx-post="/api/projects/__PROJECT_ID__/save"
+      hx-include="#canvas-state"
+      hx-indicator="#save-spinner">
+      <span class="htmx-indicator" id="save-spinner">
+        <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+      </span>
+      Save
+    </button>
+  </div>
+</header>
+
+<!-- Hidden canvas state input, updated by JS on every change -->
+<input type="hidden" id="canvas-state" name="canvasState" value="{}" />
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MAIN BUILDER LAYOUT: Left Panel | Canvas | Right Panel
+═══════════════════════════════════════════════════════════════════════════ -->
+<div class="flex h-[calc(100vh-3rem)] overflow-hidden">
+
+  <!-- ── LEFT SIDEBAR ───────────────────────────────────────────────────── -->
+  <aside id="left-panel" class="w-64 bg-[#1a1d27] border-r border-white/[0.06] flex flex-col shrink-0 overflow-hidden">
+
+    <!-- Tab Switcher: Elements | Layers | Templates -->
+    <div class="flex border-b border-white/[0.06] shrink-0">
+      <button class="left-tab active flex-1 py-2.5 text-xs font-medium transition-colors" data-tab="elements" onclick="switchLeftTab('elements')">Elements</button>
+      <button class="left-tab flex-1 py-2.5 text-xs font-medium transition-colors text-gray-500 hover:text-gray-300" data-tab="layers" onclick="switchLeftTab('layers')">Layers</button>
+      <button class="left-tab flex-1 py-2.5 text-xs font-medium transition-colors text-gray-500 hover:text-gray-300" data-tab="templates" onclick="switchLeftTab('templates')">Templates</button>
+    </div>
+
+    <!-- ── ELEMENTS LIBRARY TAB ─────────────────────────────────────────── -->
+    <div id="tab-elements" class="flex-1 overflow-y-auto p-3 space-y-4">
+
+      <!-- Search -->
+      <input type="text" placeholder="Search elements…"
+        class="w-full bg-[#12141f] text-xs text-gray-300 px-3 py-2 rounded-lg border border-white/[0.06] outline-none focus:border-violet-500/50 transition-colors"
+        oninput="filterElements(this.value)" />
+
+      <!-- Element Groups -->
+      <div class="element-group">
+        <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-2">Layout</p>
+        <div class="grid grid-cols-2 gap-1.5" id="layout-elements">
+          <!-- Populated by elementLibrary.js -->
+        </div>
+      </div>
+
+      <div class="element-group">
+        <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-2">Typography</p>
+        <div class="grid grid-cols-2 gap-1.5" id="typography-elements"></div>
+      </div>
+
+      <div class="element-group">
+        <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-2">Media</p>
+        <div class="grid grid-cols-2 gap-1.5" id="media-elements"></div>
+      </div>
+
+      <div class="element-group">
+        <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-2">Forms</p>
+        <div class="grid grid-cols-2 gap-1.5" id="form-elements"></div>
+      </div>
+
+      <div class="element-group">
+        <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-2">Interactive (HTMX)</p>
+        <div class="grid grid-cols-2 gap-1.5" id="htmx-elements"></div>
+      </div>
+    </div>
+
+    <!-- ── LAYERS PANEL TAB ──────────────────────────────────────────────── -->
+    <div id="tab-layers" class="hidden flex-1 overflow-y-auto p-3">
+      <div id="layers-tree" class="space-y-0.5">
+        <!-- Rendered by layersPanel.js -->
+        <p class="text-xs text-gray-600 text-center mt-8">Drop elements onto the canvas<br/>to see the layer tree.</p>
+      </div>
+    </div>
+
+    <!-- ── TEMPLATES TAB ─────────────────────────────────────────────────── -->
+    <div id="tab-templates" class="hidden flex-1 overflow-y-auto">
+      <div
+        id="templates-grid"
+        hx-get="/builder/templates"
+        hx-trigger="intersect once"
+        hx-indicator="#tmpl-spinner"
+        class="p-3 grid grid-cols-1 gap-3">
+        <div id="tmpl-spinner" class="htmx-indicator text-center py-8">
+          <svg class="w-5 h-5 animate-spin mx-auto text-violet-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── CANVAS AREA ────────────────────────────────────────────────────── -->
+  <main id="canvas-wrapper" class="flex-1 overflow-auto bg-[#0f1117] relative flex flex-col items-center">
+
+    <!-- Canvas grid overlay (visual guide) -->
+    <div id="canvas-grid-overlay" class="fixed inset-0 pointer-events-none opacity-0 transition-opacity"
+      style="background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 20px 20px;">
+    </div>
+
+    <!-- Canvas frame (the actual page being built) -->
+    <div id="canvas-frame-container" class="relative mt-8 mb-16 transition-all duration-300"
+      style="width: 1280px;">
+
+      <!-- Ruler -->
+      <div class="flex justify-between text-[9px] text-gray-700 mb-1 px-1 font-mono">
+        <span>0</span><span>320</span><span>640</span><span>960</span><span>1280px</span>
+      </div>
+
+      <!-- The page canvas (contenteditable sections drop here) -->
+      <div
+        id="canvas"
+        class="bg-white min-h-screen relative shadow-2xl shadow-black/50 transition-all duration-300"
+        data-canvas="true"
+        onclick="handleCanvasClick(event)"
+        onmouseover="handleCanvasHover(event)"
+        onmouseleave="clearHoverHighlight()"
+      >
+        <!-- DropZone hint shown when canvas is empty -->
+        <div id="canvas-empty-hint" class="flex flex-col items-center justify-center h-96 text-gray-400 pointer-events-none">
+          <svg class="w-12 h-12 mb-3 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 4v16m8-8H4"/>
+          </svg>
+          <p class="text-sm font-medium opacity-50">Drag elements here to start building</p>
+        </div>
+
+        <!-- Elements are dynamically injected here by canvas.js -->
+      </div>
+    </div>
+  </main>
+
+  <!-- ── RIGHT PANEL: Style / Settings / HTMX ──────────────────────────── -->
+  <aside id="right-panel" class="w-72 bg-[#1a1d27] border-l border-white/[0.06] flex flex-col shrink-0 overflow-hidden">
+
+    <!-- No selection state -->
+    <div id="panel-empty" class="flex-1 flex flex-col items-center justify-center text-center px-6">
+      <svg class="w-10 h-10 text-gray-700 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/>
+      </svg>
+      <p class="text-xs text-gray-600">Select an element<br/>to edit its properties</p>
+    </div>
+
+    <!-- Properties panel (shown on selection) -->
+    <div id="panel-properties" class="hidden flex-1 flex-col overflow-hidden">
+
+      <!-- Element info bar -->
+      <div class="px-4 py-3 border-b border-white/[0.06] flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2">
+          <span id="selected-tag-badge" class="px-1.5 py-0.5 bg-violet-600/30 text-violet-300 text-[10px] font-mono rounded">DIV</span>
+          <input id="selected-id" type="text" placeholder="#element-id"
+            class="text-xs text-gray-400 bg-transparent border-none outline-none w-24 font-mono"
+            oninput="updateElementAttr('id', this.value)" />
+        </div>
+        <button onclick="deleteSelectedElement()" class="p-1 hover:bg-red-500/20 text-gray-600 hover:text-red-400 rounded transition-all" title="Delete element">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>
+      </div>
+
+      <!-- Property Tabs -->
+      <div class="flex border-b border-white/[0.06] shrink-0 text-[10px]">
+        <button class="prop-tab active flex-1 py-2 font-medium transition-colors" data-ptab="style" onclick="switchPropTab('style')">Style</button>
+        <button class="prop-tab flex-1 py-2 font-medium text-gray-500 transition-colors hover:text-gray-300" data-ptab="content" onclick="switchPropTab('content')">Content</button>
+        <button class="prop-tab flex-1 py-2 font-medium text-gray-500 transition-colors hover:text-gray-300" data-ptab="htmx" onclick="switchPropTab('htmx')">HTMX</button>
+        <button class="prop-tab flex-1 py-2 font-medium text-gray-500 transition-colors hover:text-gray-300" data-ptab="anim" onclick="switchPropTab('anim')">Anim</button>
+      </div>
+
+      <!-- Scrollable content area -->
+      <div class="flex-1 overflow-y-auto">
+
+        <!-- ── STYLE TAB ──────────────────────────────────────────────── -->
+        <div id="ptab-style" class="p-4 space-y-5">
+
+          <!-- Layout -->
+          <section class="prop-section">
+            <h3 class="prop-section-title">Layout</h3>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="prop-label">Display</label>
+                <select class="prop-select" onchange="applyStyle('display', this.value)">
+                  <option value="block">block</option>
+                  <option value="flex">flex</option>
+                  <option value="grid">grid</option>
+                  <option value="inline-block">inline-block</option>
+                  <option value="inline">inline</option>
+                  <option value="none">none</option>
+                </select>
+              </div>
+              <div>
+                <label class="prop-label">Position</label>
+                <select class="prop-select" onchange="applyStyle('position', this.value)">
+                  <option value="static">static</option>
+                  <option value="relative">relative</option>
+                  <option value="absolute">absolute</option>
+                  <option value="fixed">fixed</option>
+                  <option value="sticky">sticky</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Flexbox Controls (shown when display=flex) -->
+            <div id="flex-controls" class="mt-3 space-y-2 hidden">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="prop-label">Direction</label>
+                  <select class="prop-select" onchange="applyStyle('flexDirection', this.value)">
+                    <option value="row">Row</option>
+                    <option value="row-reverse">Row Rev</option>
+                    <option value="column">Column</option>
+                    <option value="column-reverse">Col Rev</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="prop-label">Wrap</label>
+                  <select class="prop-select" onchange="applyStyle('flexWrap', this.value)">
+                    <option value="nowrap">No Wrap</option>
+                    <option value="wrap">Wrap</option>
+                    <option value="wrap-reverse">Wrap Rev</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="prop-label">Justify Content</label>
+                <div class="flex gap-1 mt-1">
+                  <button class="flex-align-btn" title="flex-start" onclick="applyStyle('justifyContent','flex-start')">⇤</button>
+                  <button class="flex-align-btn" title="center" onclick="applyStyle('justifyContent','center')">⇔</button>
+                  <button class="flex-align-btn" title="flex-end" onclick="applyStyle('justifyContent','flex-end')">⇥</button>
+                  <button class="flex-align-btn" title="space-between" onclick="applyStyle('justifyContent','space-between')">↔</button>
+                  <button class="flex-align-btn" title="space-around" onclick="applyStyle('justifyContent','space-around')">↕</button>
+                </div>
+              </div>
+              <div>
+                <label class="prop-label">Align Items</label>
+                <div class="flex gap-1 mt-1">
+                  <button class="flex-align-btn" title="flex-start" onclick="applyStyle('alignItems','flex-start')">⤒</button>
+                  <button class="flex-align-btn" title="center" onclick="applyStyle('alignItems','center')">⊕</button>
+                  <button class="flex-align-btn" title="flex-end" onclick="applyStyle('alignItems','flex-end')">⤓</button>
+                  <button class="flex-align-btn" title="stretch" onclick="applyStyle('alignItems','stretch')">⇕</button>
+                  <button class="flex-align-btn" title="baseline" onclick="applyStyle('alignItems','baseline')">≡</button>
+                </div>
+              </div>
+              <div>
+                <label class="prop-label">Gap</label>
+                <input type="text" class="prop-input" placeholder="0px" oninput="applyStyle('gap', this.value)" />
+              </div>
+            </div>
+          </section>
+
+          <!-- Box Model -->
+          <section class="prop-section">
+            <h3 class="prop-section-title">Box Model</h3>
+            <!-- Width / Height -->
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="prop-label">Width</label>
+                <input type="text" id="prop-width" class="prop-input" placeholder="auto" oninput="applyStyle('width', this.value)" />
+              </div>
+              <div>
+                <label class="prop-label">Height</label>
+                <input type="text" id="prop-height" class="prop-input" placeholder="auto" oninput="applyStyle('height', this.value)" />
+              </div>
+              <div>
+                <label class="prop-label">Min-W</label>
+                <input type="text" class="prop-input" placeholder="0" oninput="applyStyle('minWidth', this.value)" />
+              </div>
+              <div>
+                <label class="prop-label">Max-W</label>
+                <input type="text" class="prop-input" placeholder="none" oninput="applyStyle('maxWidth', this.value)" />
+              </div>
+            </div>
+
+            <!-- Margin / Padding Visual Box -->
+            <div class="mt-3">
+              <label class="prop-label mb-2">Margin</label>
+              <div class="box-model-control" data-prop="margin">
+                <input type="text" class="box-top" placeholder="0" oninput="applyBoxModel('margin', 'Top', this.value)" />
+                <input type="text" class="box-right" placeholder="0" oninput="applyBoxModel('margin', 'Right', this.value)" />
+                <input type="text" class="box-bottom" placeholder="0" oninput="applyBoxModel('margin', 'Bottom', this.value)" />
+                <input type="text" class="box-left" placeholder="0" oninput="applyBoxModel('margin', 'Left', this.value)" />
+                <span class="box-label">M</span>
+              </div>
+
+              <label class="prop-label mt-3 mb-2">Padding</label>
+              <div class="box-model-control" data-prop="padding">
+                <input type="text" class="box-top" placeholder="0" oninput="applyBoxModel('padding', 'Top', this.value)" />
+                <input type="text" class="box-right" placeholder="0" oninput="applyBoxModel('padding', 'Right', this.value)" />
+                <input type="text" class="box-bottom" placeholder="0" oninput="applyBoxModel('padding', 'Bottom', this.value)" />
+                <input type="text" class="box-left" placeholder="0" oninput="applyBoxModel('padding', 'Left', this.value)" />
+                <span class="box-label">P</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Typography -->
+          <section class="prop-section" id="typography-section">
+            <h3 class="prop-section-title">Typography</h3>
+            <div class="space-y-2">
+              <div>
+                <label class="prop-label">Font Family</label>
+                <select class="prop-select" onchange="applyStyle('fontFamily', this.value)">
+                  <option value="inherit">Inherit</option>
+                  <option value="'Inter', sans-serif">Inter</option>
+                  <option value="'Georgia', serif">Georgia</option>
+                  <option value="'Playfair Display', serif">Playfair Display</option>
+                  <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+                  <option value="'Arial', sans-serif">Arial</option>
+                  <option value="system-ui, sans-serif">System UI</option>
+                </select>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="prop-label">Size</label>
+                  <input type="text" id="prop-font-size" class="prop-input" placeholder="16px" oninput="applyStyle('fontSize', this.value)" />
+                </div>
+                <div>
+                  <label class="prop-label">Weight</label>
+                  <select class="prop-select" onchange="applyStyle('fontWeight', this.value)">
+                    <option value="300">Light 300</option>
+                    <option value="400" selected>Regular 400</option>
+                    <option value="500">Medium 500</option>
+                    <option value="600">Semi 600</option>
+                    <option value="700">Bold 700</option>
+                    <option value="900">Black 900</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="prop-label">Line Height</label>
+                  <input type="text" class="prop-input" placeholder="1.5" oninput="applyStyle('lineHeight', this.value)" />
+                </div>
+                <div>
+                  <label class="prop-label">Letter Spacing</label>
+                  <input type="text" class="prop-input" placeholder="0em" oninput="applyStyle('letterSpacing', this.value)" />
+                </div>
+              </div>
+              <div class="flex gap-1">
+                <button class="flex-1 py-1.5 text-xs rounded border border-white/10 hover:bg-white/5 font-bold transition-all" onclick="applyStyle('textAlign','left')">L</button>
+                <button class="flex-1 py-1.5 text-xs rounded border border-white/10 hover:bg-white/5 font-bold transition-all" onclick="applyStyle('textAlign','center')">C</button>
+                <button class="flex-1 py-1.5 text-xs rounded border border-white/10 hover:bg-white/5 font-bold transition-all" onclick="applyStyle('textAlign','right')">R</button>
+                <button class="flex-1 py-1.5 text-xs rounded border border-white/10 hover:bg-white/5 font-bold transition-all" onclick="applyStyle('textAlign','justify')">J</button>
+              </div>
+              <div>
+                <label class="prop-label">Color</label>
+                <div class="flex gap-2">
+                  <input type="color" id="prop-color" class="w-8 h-8 rounded cursor-pointer border border-white/10 bg-transparent" oninput="applyStyle('color', this.value)" />
+                  <input type="text" class="prop-input flex-1" placeholder="#000000" oninput="applyStyle('color', this.value)" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Background -->
+          <section class="prop-section">
+            <h3 class="prop-section-title">Background</h3>
+            <div class="space-y-2">
+              <div>
+                <label class="prop-label">Type</label>
+                <select class="prop-select" onchange="switchBgType(this.value)">
+                  <option value="none">None</option>
+                  <option value="color">Solid Color</option>
+                  <option value="gradient">Gradient</option>
+                  <option value="image">Image</option>
+                </select>
+              </div>
+              <div id="bg-color-ctrl" class="hidden">
+                <div class="flex gap-2">
+                  <input type="color" class="w-8 h-8 rounded cursor-pointer border border-white/10" oninput="applyStyle('backgroundColor', this.value)" />
+                  <input type="text" class="prop-input flex-1" placeholder="#ffffff" oninput="applyStyle('backgroundColor', this.value)" />
+                </div>
+              </div>
+              <div id="bg-gradient-ctrl" class="hidden space-y-2">
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="prop-label">Color 1</label>
+                    <input type="color" class="w-full h-7 rounded cursor-pointer border border-white/10" id="grad-color1" oninput="applyGradient()" />
+                  </div>
+                  <div>
+                    <label class="prop-label">Color 2</label>
+                    <input type="color" class="w-full h-7 rounded cursor-pointer border border-white/10" id="grad-color2" value="#9333ea" oninput="applyGradient()" />
+                  </div>
+                </div>
+                <div>
+                  <label class="prop-label">Angle</label>
+                  <input type="range" min="0" max="360" value="135" class="w-full" id="grad-angle" oninput="applyGradient()" />
+                </div>
+              </div>
+              <div id="bg-image-ctrl" class="hidden">
+                <button onclick="openMediaPicker('background')"
+                  class="w-full py-2 text-xs text-gray-400 border border-dashed border-white/20 rounded hover:border-violet-500/50 hover:text-violet-400 transition-all">
+                  + Pick from Media Library
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Border -->
+          <section class="prop-section">
+            <h3 class="prop-section-title">Border & Effects</h3>
+            <div class="space-y-2">
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <label class="prop-label">Width</label>
+                  <input type="text" class="prop-input" placeholder="0px" oninput="applyStyle('borderWidth', this.value)" />
+                </div>
+                <div>
+                  <label class="prop-label">Style</label>
+                  <select class="prop-select" onchange="applyStyle('borderStyle', this.value)">
+                    <option value="none">none</option>
+                    <option value="solid">solid</option>
+                    <option value="dashed">dashed</option>
+                    <option value="dotted">dotted</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="prop-label">Color</label>
+                  <input type="color" class="w-full h-7 rounded cursor-pointer border border-white/10" oninput="applyStyle('borderColor', this.value)" />
+                </div>
+              </div>
+              <div>
+                <label class="prop-label">Border Radius</label>
+                <input type="text" class="prop-input" placeholder="0px" oninput="applyStyle('borderRadius', this.value)" />
+              </div>
+              <div>
+                <label class="prop-label">Box Shadow</label>
+                <input type="text" class="prop-input" placeholder="0px 4px 12px rgba(0,0,0,0.1)" oninput="applyStyle('boxShadow', this.value)" />
+              </div>
+              <div>
+                <label class="prop-label">Opacity</label>
+                <input type="range" min="0" max="100" value="100" class="w-full" oninput="applyStyle('opacity', this.value/100)" />
+              </div>
+              <div>
+                <label class="prop-label">Filter (blur, brightness…)</label>
+                <input type="text" class="prop-input" placeholder="blur(0px)" oninput="applyStyle('filter', this.value)" />
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- ── CONTENT TAB ─────────────────────────────────────────────── -->
+        <div id="ptab-content" class="hidden p-4 space-y-4">
+          <div>
+            <label class="prop-label">Inner Text</label>
+            <textarea id="prop-innertext" rows="4"
+              class="w-full bg-[#12141f] text-xs text-gray-300 px-3 py-2 rounded-lg border border-white/[0.06] outline-none focus:border-violet-500/50 font-mono resize-y"
+              oninput="updateElementContent('text', this.value)"></textarea>
+          </div>
+          <div>
+            <label class="prop-label">CSS Classes</label>
+            <input type="text" id="prop-classes" class="prop-input" placeholder="class1 class2"
+              oninput="updateElementAttr('className', this.value)" />
+          </div>
+          <div>
+            <label class="prop-label">Custom Attributes (JSON)</label>
+            <textarea id="prop-attrs" rows="3"
+              class="w-full bg-[#12141f] text-xs text-gray-300 px-3 py-2 rounded-lg border border-white/[0.06] outline-none focus:border-violet-500/50 font-mono resize-y"
+              placeholder='{"data-key": "value"}'
+              oninput="updateCustomAttrs(this.value)"></textarea>
+          </div>
+          <!-- Custom Code Injection -->
+          <div>
+            <label class="prop-label">Custom HTML (innerHTML)</label>
+            <textarea id="prop-innerhtml" rows="5"
+              class="w-full bg-[#12141f] text-xs text-gray-300 px-3 py-2 rounded-lg border border-white/[0.06] outline-none focus:border-violet-500/50 font-mono resize-y"
+              placeholder="<span>Raw HTML</span>"
+              oninput="updateElementContent('html', this.value)"></textarea>
+          </div>
+        </div>
+
+        <!-- ── HTMX TAB ────────────────────────────────────────────────── -->
+        <div id="ptab-htmx" class="hidden p-4 space-y-4">
+          <p class="text-[10px] text-gray-500">Configure HTMX behaviors without writing code.</p>
+
+          <div>
+            <label class="prop-label">hx-trigger</label>
+            <select class="prop-select" onchange="applyHTMX('hx-trigger', this.value)">
+              <option value="">— none —</option>
+              <option value="click">click</option>
+              <option value="change">change</option>
+              <option value="submit">submit</option>
+              <option value="mouseover">mouseover</option>
+              <option value="keyup changed delay:300ms">keyup (debounced)</option>
+              <option value="load">load</option>
+              <option value="revealed">revealed (scroll into view)</option>
+              <option value="every 5s">every 5s (polling)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="prop-label">HTTP Method</label>
+            <div class="flex gap-1">
+              <button class="htmx-method-btn active" data-method="hx-get" onclick="setHTMXMethod('hx-get', this)">GET</button>
+              <button class="htmx-method-btn" data-method="hx-post" onclick="setHTMXMethod('hx-post', this)">POST</button>
+              <button class="htmx-method-btn" data-method="hx-put" onclick="setHTMXMethod('hx-put', this)">PUT</button>
+              <button class="htmx-method-btn" data-method="hx-delete" onclick="setHTMXMethod('hx-delete', this)">DEL</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="prop-label">Endpoint URL</label>
+            <input type="text" class="prop-input" placeholder="/api/endpoint"
+              oninput="applyHTMXMethod(this.value)" id="htmx-url-input" />
+          </div>
+
+          <div>
+            <label class="prop-label">hx-target (CSS selector)</label>
+            <input type="text" class="prop-input" placeholder="#result-div"
+              oninput="applyHTMX('hx-target', this.value)" />
+          </div>
+
+          <div>
+            <label class="prop-label">hx-swap</label>
+            <select class="prop-select" onchange="applyHTMX('hx-swap', this.value)">
+              <option value="innerHTML">innerHTML</option>
+              <option value="outerHTML">outerHTML</option>
+              <option value="beforebegin">beforebegin</option>
+              <option value="afterbegin">afterbegin</option>
+              <option value="beforeend">beforeend</option>
+              <option value="afterend">afterend</option>
+              <option value="delete">delete</option>
+              <option value="none">none</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="prop-label">hx-include</label>
+            <input type="text" class="prop-input" placeholder="#form-id or closest form"
+              oninput="applyHTMX('hx-include', this.value)" />
+          </div>
+
+          <!-- Conditional Logic Builder -->
+          <div class="border-t border-white/[0.06] pt-4">
+            <h3 class="prop-section-title">Conditional Logic</h3>
+            <div class="space-y-2">
+              <div>
+                <label class="prop-label">On Success → Show</label>
+                <input type="text" class="prop-input" placeholder="#success-msg"
+                  oninput="setConditional('success', 'show', this.value)" />
+              </div>
+              <div>
+                <label class="prop-label">On Success → Hide</label>
+                <input type="text" class="prop-input" placeholder="#form"
+                  oninput="setConditional('success', 'hide', this.value)" />
+              </div>
+              <div>
+                <label class="prop-label">On Error → Show</label>
+                <input type="text" class="prop-input" placeholder="#error-msg"
+                  oninput="setConditional('error', 'show', this.value)" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ANIMATION TAB ───────────────────────────────────────────── -->
+        <div id="ptab-anim" class="hidden p-4 space-y-4">
+          <div>
+            <label class="prop-label">Preset</label>
+            <select class="prop-select" onchange="applyAnimPreset(this.value)">
+              <option value="">— none —</option>
+              <option value="fadeIn">Fade In</option>
+              <option value="fadeOut">Fade Out</option>
+              <option value="slideInLeft">Slide In Left</option>
+              <option value="slideInRight">Slide In Right</option>
+              <option value="slideInUp">Slide In Up</option>
+              <option value="slideInDown">Slide In Down</option>
+              <option value="zoomIn">Zoom In</option>
+              <option value="zoomOut">Zoom Out</option>
+              <option value="bounce">Bounce</option>
+              <option value="pulse">Pulse</option>
+              <option value="shake">Shake</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="prop-label">Duration</label>
+              <input type="text" class="prop-input" placeholder="0.5s" oninput="applyTransition('duration', this.value)" />
+            </div>
+            <div>
+              <label class="prop-label">Delay</label>
+              <input type="text" class="prop-input" placeholder="0s" oninput="applyTransition('delay', this.value)" />
+            </div>
+          </div>
+
+          <div>
+            <label class="prop-label">Easing Curve</label>
+            <select class="prop-select" onchange="applyTransition('timing', this.value)">
+              <option value="ease">ease</option>
+              <option value="ease-in">ease-in</option>
+              <option value="ease-out">ease-out</option>
+              <option value="ease-in-out">ease-in-out</option>
+              <option value="linear">linear</option>
+              <option value="cubic-bezier(0.68,-0.55,0.27,1.55)">Spring</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="prop-label">Trigger On</label>
+            <select class="prop-select" onchange="setAnimTrigger(this.value)">
+              <option value="load">Page Load</option>
+              <option value="scroll">Scroll Into View</option>
+              <option value="hover">Hover</option>
+              <option value="click">Click</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="prop-label">Iteration</label>
+            <select class="prop-select" onchange="applyTransition('iteration', this.value)">
+              <option value="1">Once</option>
+              <option value="2">2x</option>
+              <option value="3">3x</option>
+              <option value="infinite">Infinite</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="prop-label">Custom transition (CSS)</label>
+            <input type="text" class="prop-input" placeholder="all 0.3s ease"
+              oninput="applyStyle('transition', this.value)" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MEDIA PICKER MODAL
+═══════════════════════════════════════════════════════════════════════════ -->
+<div id="media-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center">
+  <div class="bg-[#1a1d27] border border-white/10 rounded-xl w-[680px] max-h-[80vh] flex flex-col shadow-2xl">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
+      <h2 class="text-sm font-semibold">Media Library</h2>
+      <div class="flex items-center gap-3">
+        <label class="cursor-pointer flex items-center gap-2 px-3 py-1.5 bg-violet-600 hover:bg-violet-500 rounded-md text-xs font-medium transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+          Upload
+          <input type="file" class="hidden" multiple accept="image/*,video/*,application/pdf"
+            hx-post="/api/media/upload"
+            hx-encoding="multipart/form-data"
+            hx-target="#media-grid"
+            hx-swap="afterbegin"
+            name="files" />
+        </label>
+        <button onclick="closeMediaPicker()" class="text-gray-400 hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="media-grid"
+      class="flex-1 overflow-y-auto p-4 grid grid-cols-4 gap-3"
+      hx-get="/api/media/list"
+      hx-trigger="intersect once">
+      <!-- Media thumbnails loaded via HTMX -->
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     EXPORT STATUS TOAST
+═══════════════════════════════════════════════════════════════════════════ -->
+<div id="export-status" class="fixed bottom-6 right-6 z-[200]"></div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     CONTEXT MENU (right-click on canvas elements)
+═══════════════════════════════════════════════════════════════════════════ -->
+<div id="context-menu" class="hidden fixed z-[300] bg-[#1e2130] border border-white/10 rounded-lg shadow-2xl py-1 w-48 text-xs">
+  <button class="w-full text-left px-4 py-2 hover:bg-white/10 transition-colors" onclick="contextAction('duplicate')">Duplicate</button>
+  <button class="w-full text-left px-4 py-2 hover:bg-white/10 transition-colors" onclick="contextAction('copy-style')">Copy Style</button>
+  <button class="w-full text-left px-4 py-2 hover:bg-white/10 transition-colors" onclick="contextAction('paste-style')">Paste Style</button>
+  <button class="w-full text-left px-4 py-2 hover:bg-white/10 transition-colors" onclick="contextAction('wrap-div')">Wrap in Div</button>
+  <div class="h-px bg-white/10 my-1"></div>
+  <button class="w-full text-left px-4 py-2 hover:bg-white/10 transition-colors" onclick="contextAction('move-up')">Move Up</button>
+  <button class="w-full text-left px-4 py-2 hover:bg-white/10 transition-colors" onclick="contextAction('move-down')">Move Down</button>
+  <div class="h-px bg-white/10 my-1"></div>
+  <button class="w-full text-left px-4 py-2 hover:bg-red-500/20 text-red-400 transition-colors" onclick="contextAction('delete')">Delete</button>
+</div>
+
+<script>
+// ── Global viewport switcher ──────────────────────────────────────────────
+function setViewport(mode) {
+  const frame = document.getElementById('canvas-frame-container');
+  const widths = { desktop: '1280px', tablet: '768px', mobile: '390px' };
+  frame.style.width = widths[mode] || '1280px';
+  document.querySelectorAll('.viewport-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.viewport === mode);
+  });
+}
+
+// ── Left panel tab switcher ───────────────────────────────────────────────
+function switchLeftTab(tab) {
+  ['elements', 'layers', 'templates'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
+  });
+  document.querySelectorAll('.left-tab').forEach(btn => {
+    const isActive = btn.dataset.tab === tab;
+    btn.classList.toggle('active', isActive);
+    btn.classList.toggle('text-gray-500', !isActive);
+  });
+}
+
+// ── Property panel tab switcher ───────────────────────────────────────────
+function switchPropTab(tab) {
+  ['style', 'content', 'htmx', 'anim'].forEach(t => {
+    document.getElementById('ptab-' + t).classList.toggle('hidden', t !== tab);
+  });
+  document.querySelectorAll('.prop-tab').forEach(btn => {
+    const isActive = btn.dataset.ptab === tab;
+    btn.classList.toggle('active', isActive);
+    btn.classList.toggle('text-gray-500', !isActive);
+  });
+}
+
+// ── Export menu toggle ────────────────────────────────────────────────────
+function toggleExportMenu() {
+  document.getElementById('export-menu').classList.toggle('hidden');
+}
+document.addEventListener('click', (e) => {
+  if (!document.getElementById('export-menu-wrapper').contains(e.target)) {
+    document.getElementById('export-menu').classList.add('hidden');
+  }
+});
+
+// ── Media modal ───────────────────────────────────────────────────────────
+let mediaPurpose = 'image';
+function openMediaPicker(purpose = 'image') {
+  mediaPurpose = purpose;
+  document.getElementById('media-modal').classList.remove('hidden');
+}
+function closeMediaPicker() {
+  document.getElementById('media-modal').classList.add('hidden');
+}
+
+// ── Context menu ──────────────────────────────────────────────────────────
+document.addEventListener('contextmenu', (e) => {
+  const el = e.target.closest('[data-nc-id]');
+  if (!el) return;
+  e.preventDefault();
+  const menu = document.getElementById('context-menu');
+  menu.style.left = e.clientX + 'px';
+  menu.style.top = e.clientY + 'px';
+  menu.classList.remove('hidden');
+  window.__ctxElement = el;
+});
+document.addEventListener('click', () => {
+  document.getElementById('context-menu').classList.add('hidden');
+});
+
+// ── Preview window ────────────────────────────────────────────────────────
+function openPreview() {
+  window.open('/builder/preview/__PROJECT_ID__', '_blank', 'width=1280,height=800');
+}
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 'z' && !e.shiftKey) { e.preventDefault(); window.history_undo?.(); }
+  if (e.ctrlKey && e.key === 'z' && e.shiftKey)  { e.preventDefault(); window.history_redo?.(); }
+  if (e.ctrlKey && e.key === 's') { e.preventDefault(); document.querySelector('[hx-post*="/save"]')?.click(); }
+  if (e.key === 'Delete' || e.key === 'Backspace') {
+    if (document.activeElement.tagName === 'BODY') deleteSelectedElement?.();
+  }
+  if (e.ctrlKey && e.key === 'd') { e.preventDefault(); contextAction('duplicate'); }
+  if (e.key === 'Escape') clearCanvasSelection?.();
+});
+</script>
+</body>
+</html>

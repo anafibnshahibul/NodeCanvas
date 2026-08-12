@@ -1,0 +1,10 @@
+node_modules/
+.env
+uploads/originals/
+uploads/thumbs/
+uploads/tmp/
+exports/
+public/builder/builder.dist.css
+*.log
+.DS_Store
+dist/
