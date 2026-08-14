@@ -8,29 +8,33 @@ const router = Router();
 
 router.post("/:projectId/:format", async (req, res, next) => {
   try {
-    const project = await Project.findById(req.params.projectId);
+    const { projectId, format } = req.params;
+
+    const project = await Project.findById(projectId);
     if (!project) return res.status(404).json({ error: "Project not found" });
 
-    const pages = await Page.find({ projectId: req.params.projectId }).sort({ order: 1 });
-    if (!pages.length) return res.status(400).json({ error: "Project has no pages" });
+    const pages = await Page.find({ projectId }).sort({ order: 1 });
+    if (!pages.length) return res.status(400).json({ error: "No pages found" });
 
-    const zipPath = await exportProject(project.toObject(), pages.map(p => p.toObject()), req.params.format);
+    // exportProject(project, pages, format)  ← correct order
+    const zipPath  = await exportProject(
+      project.toObject(),
+      pages.map(p => p.toObject()),
+      format
+    );
     const filename = path.basename(zipPath);
 
-    const isHTMX = req.headers["hx-request"] === "true";
-    if (isHTMX) {
+    if (req.headers["hx-request"] === "true") {
       return res.send(`
-        <div class="flex items-center gap-3 bg-[#1e2130] border border-white/10 rounded-xl px-4 py-3 shadow-2xl"
-             style="animation:slideInUp 0.3s ease both">
-          <svg class="w-5 h-5 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div style="display:flex;align-items:center;gap:12px;background:#1e2130;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 16px;box-shadow:0 20px 40px rgba(0,0,0,.4)">
+          <svg style="width:20px;height:20px;color:#34d399;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
           </svg>
           <div>
-            <p class="text-xs font-semibold text-white">Export ready — ${pages.length} page(s)</p>
-            <a href="/exports/${filename}" download
-               class="text-[10px] text-violet-400 hover:text-violet-300">⬇ Download ${filename}</a>
+            <p style="font-size:12px;font-weight:600;color:#fff;margin:0 0 2px">Export ready — ${pages.length} page(s)</p>
+            <a href="/exports/${filename}" download style="font-size:10px;color:#a78bfa">⬇ Download ${filename}</a>
           </div>
-          <button onclick="this.closest('div').remove()" class="ml-2 text-gray-500 hover:text-white">✕</button>
+          <button onclick="this.closest('div').remove()" style="margin-left:auto;background:none;border:none;color:#6b7280;cursor:pointer;font-size:16px">✕</button>
         </div>`);
     }
     res.json({ downloadUrl: `/exports/${filename}`, filename });

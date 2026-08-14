@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title><%= page ? page.name : project.name %> — Preview</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,sans-serif}
+    img{max-width:100%;display:block}
+    /* Animation presets */
+    @keyframes fadeIn      {from{opacity:0}to{opacity:1}}
+    @keyframes slideInLeft {from{transform:translateX(-40px);opacity:0}to{transform:translateX(0);opacity:1}}
+    @keyframes slideInRight{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
+    @keyframes slideInUp   {from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+    @keyframes slideInDown {from{transform:translateY(-40px);opacity:0}to{transform:translateY(0);opacity:1}}
+    @keyframes zoomIn      {from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+    @keyframes bounce      {0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+    @keyframes pulse       {0%,100%{opacity:1}50%{opacity:.5}}
+    @keyframes shake       {0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+    .nc-anim-fadeIn      {animation:fadeIn       var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both}
+    .nc-anim-slideInLeft {animation:slideInLeft  var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both}
+    .nc-anim-slideInRight{animation:slideInRight var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both}
+    .nc-anim-slideInUp   {animation:slideInUp    var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both}
+    .nc-anim-slideInDown {animation:slideInDown  var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both}
+    .nc-anim-zoomIn      {animation:zoomIn       var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both}
+    .nc-anim-bounce      {animation:bounce       var(--nc-dur,.8s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both}
+    .nc-anim-pulse       {animation:pulse        var(--nc-dur,1s)  var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,infinite) both}
+    .nc-anim-shake       {animation:shake        var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both}
+    <%= project.globalMeta?.globalCSS || "" %>
+    <%= page?.meta?.customCSS || "" %>
+
+    /* Preview toolbar */
+    #nc-preview-bar{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(15,17,23,.95);
+      backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.06);
+      display:flex;align-items:center;justify-between;padding:0 16px;z-index:9999;gap:12px}
+    #nc-preview-bar a, #nc-preview-bar button {color:#a78bfa;font-size:11px;text-decoration:none;
+      background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:4px;
+      transition:background .15s;font-family:system-ui,sans-serif}
+    #nc-preview-bar a:hover,#nc-preview-bar button:hover{background:rgba(167,139,250,.1)}
+
+    /* Page nav */
+    <% if (project.pages && project.pages.length > 1) { %>
+    .nc-page-nav{display:flex;gap:8px;padding:10px 24px;background:#1f2937;position:sticky;top:0;z-index:100}
+    .nc-page-nav a{color:#9ca3af;text-decoration:none;font-size:13px;padding:4px 8px;border-radius:4px;transition:all .15s}
+    .nc-page-nav a:hover,.nc-page-nav a.active{background:rgba(124,58,237,.2);color:#a78bfa}
+    <% } %>
+  </style>
+</head>
+<body style="padding-bottom:36px">
+
+<!-- Multi-page nav -->
+<% if (project.pages && project.pages.length > 1) { %>
+<nav class="nc-page-nav">
+  <% project.pages.forEach(function(p) { %>
+    <a href="/builder/preview/<%= project._id %>/<%= p._id %>"
+       class="<%= page && p._id.toString() === page._id.toString() ? 'active' : '' %>">
+      <%= p.name %>
+    </a>
+  <% }); %>
+</nav>
+<% } %>
+
+<!-- Page canvas content -->
+<% if (page && page.canvas) { %>
+  <%- renderCanvas(page.canvas) %>
+<% } else { %>
+  <div style="display:flex;align-items:center;justify-content:center;height:80vh;color:#6b7280;font-family:system-ui">
+    <div style="text-align:center">
+      <p style="font-size:48px;margin:0">📄</p>
+      <p style="margin:12px 0 0">This page has no content yet.</p>
+      <a href="/builder/editor/<%= project._id %>" style="color:#a78bfa;font-size:14px">← Go back to editor</a>
+    </div>
+  </div>
+<% } %>
+
+<!-- Preview toolbar -->
+<div id="nc-preview-bar">
+  <div style="display:flex;align-items:center;gap:8px">
+    <span style="color:#4b5563;font-size:11px">Preview</span>
+    <span style="color:#374151">·</span>
+    <span style="color:#6b7280;font-size:11px"><%= page ? page.name : project.name %></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:4px">
+    <button onclick="setW('100%')">Desktop</button>
+    <button onclick="setW('768px')">Tablet</button>
+    <button onclick="setW('390px')">Mobile</button>
+    <span style="color:#374151;margin:0 4px">·</span>
+    <a href="/builder/editor/<%= project._id %>/<%= page ? page._id : '' %>">← Edit</a>
+  </div>
+</div>
+
+<% if (page && JSON.stringify(page.canvas).includes('hx-')) { %>
+<script src="https://unpkg.com/htmx.org@2.0.3/dist/htmx.min.js"></script>
+<% } %>
+
+<script>
+function setW(w) {
+  document.body.style.maxWidth = w;
+  document.body.style.margin   = w === "100%" ? "0" : "0 auto";
+}
+// Scroll animations
+(function(){
+  var o=new IntersectionObserver(function(e){e.forEach(function(t){if(t.isIntersecting){var c=t.target.dataset.ncAnimClass;if(c)t.target.classList.add(c);t.target.style.opacity="1";o.unobserve(t.target)}})},{threshold:0.15});
+  document.querySelectorAll("[data-nc-anim-scroll]").forEach(function(el){el.style.opacity="0";o.observe(el)});
+})();
+<%= page?.meta?.customJS || "" %>
+<%= project.globalMeta?.globalJS || "" %>
+</script>
+</body>
+</html>

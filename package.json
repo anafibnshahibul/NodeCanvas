@@ -5,7 +5,7 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": "concurrently \"node --watch server.js\" \"npx @tailwindcss/cli@next -i ./public/builder/builder.css -o ./public/builder/builder.dist.css --watch\"",
+    "dev": "concurrently \"node --watch server.js\" \"npx @tailwindcss/cli -i ./public/builder/builder.css -o ./public/builder/builder.dist.css --watch\"",
     "build:css": "npx @tailwindcss/cli@next -i ./public/builder/builder.css -o ./public/builder/builder.dist.css --minify",
     "start": "node server.js"
   },

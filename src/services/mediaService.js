@@ -6,109 +6,133 @@ import { v4 as uuidv4 } from "uuid";
 const UPLOAD_DIR = process.env.UPLOAD_DIR || "./uploads";
 const ORIGINALS  = path.join(UPLOAD_DIR, "originals");
 const THUMBS     = path.join(UPLOAD_DIR, "thumbs");
-const MAX_W      = 2560; // max output width
-const THUMB_W    = 400;
+const WEBP_DIR   = path.join(UPLOAD_DIR, "webp");
 
-// Ensure directories exist on startup
 await fs.mkdir(ORIGINALS, { recursive: true });
 await fs.mkdir(THUMBS,    { recursive: true });
+await fs.mkdir(WEBP_DIR,  { recursive: true });
 
-// ── Upload and optimize a single file ────────────────────────────────────
+const IMAGE_EXTS = new Set([".jpg",".jpeg",".png",".gif",".webp",".avif",".tiff",".bmp"]);
+const MAX_WIDTH  = 2560;
+const THUMB_W    = 400;
+const WEBP_Q     = 82;
+const THUMB_Q    = 72;
+
 export async function processUpload(file) {
-  const ext      = path.extname(file.originalname).toLowerCase();
-  const isImage  = [".jpg",".jpeg",".png",".gif",".webp",".avif",".svg"].includes(ext);
-  const id       = uuidv4();
-  const filename = `${id}${ext}`;
-
-  const originalPath = path.join(ORIGINALS, filename);
-  await fs.rename(file.path, originalPath);
+  const ext     = path.extname(file.originalname).toLowerCase();
+  const isImage = IMAGE_EXTS.has(ext);
+  const id      = uuidv4();
 
   const record = {
     id,
-    filename,
     originalName: file.originalname,
     mimeType:     file.mimetype,
-    size:         file.size,
-    url:          `/uploads/originals/${filename}`,
+    url:          null,
     thumbUrl:     null,
+    webpUrl:      null,
     width:        null,
     height:       null,
-    createdAt:    new Date().toISOString(),
+    sizeOriginal: file.size,
+    sizeWebp:     null,
+    isImage,
+    ext,
+    createdAt: new Date().toISOString(),
   };
 
-  if (isImage && ext !== ".svg") {
+  if (isImage) {
     try {
-      const meta    = await sharp(originalPath).metadata();
+      const meta    = await sharp(file.path).metadata();
       record.width  = meta.width;
       record.height = meta.height;
 
-      // Resize if too large (original)
-      if (meta.width > MAX_W) {
-        await sharp(originalPath)
-          .resize(MAX_W, null, { withoutEnlargement: true })
-          .webp({ quality: 85 })
-          .toFile(originalPath.replace(ext, ".webp"));
-      }
+      // ── WebP conversion (main file) ──────────────────────────────────
+      const webpFilename = `${id}.webp`;
+      const webpPath     = path.join(WEBP_DIR, webpFilename);
+      await sharp(file.path)
+        .resize(meta.width > MAX_WIDTH ? MAX_WIDTH : null, null, { withoutEnlargement: true })
+        .webp({ quality: WEBP_Q, effort: 4 })
+        .toFile(webpPath);
 
-      // Generate thumbnail
+      const webpStat    = await fs.stat(webpPath);
+      record.sizeWebp   = webpStat.size;
+      record.url        = `/uploads/webp/${webpFilename}`;
+      record.webpUrl    = record.url;
+
+      // ── Thumbnail ────────────────────────────────────────────────────
       const thumbFilename = `${id}-thumb.webp`;
       const thumbPath     = path.join(THUMBS, thumbFilename);
-      await sharp(originalPath)
+      await sharp(file.path)
         .resize(THUMB_W, null, { withoutEnlargement: true })
-        .webp({ quality: 75 })
+        .webp({ quality: THUMB_Q })
         .toFile(thumbPath);
-
       record.thumbUrl = `/uploads/thumbs/${thumbFilename}`;
+
+      // Keep original as fallback
+      const origFilename = `${id}${ext}`;
+      await fs.rename(file.path, path.join(ORIGINALS, origFilename));
+
+      const saved = ((file.size - webpStat.size) / file.size * 100).toFixed(1);
+      console.log(`  ✓ Converted ${file.originalname} → WebP, saved ${saved}%`);
     } catch (err) {
-      console.warn("Image optimization failed:", err.message);
+      console.warn("  ⚠ Image processing failed:", err.message);
+      // Fallback: just store original
+      const origFilename = `${id}${ext}`;
+      await fs.rename(file.path, path.join(ORIGINALS, origFilename));
+      record.url = `/uploads/originals/${origFilename}`;
     }
+  } else {
+    // Non-image file: store as-is
+    const origFilename = `${id}${ext}`;
+    await fs.rename(file.path, path.join(ORIGINALS, origFilename));
+    record.url = `/uploads/originals/${origFilename}`;
   }
 
   return record;
 }
 
-// ── List all uploaded media ───────────────────────────────────────────────
 export async function listMedia(page = 1, perPage = 40) {
-  const files = await fs.readdir(ORIGINALS);
-  const sorted = files.reverse(); // newest first
-  const paged  = sorted.slice((page - 1) * perPage, page * perPage);
+  // Scan WebP folder first (converted images), then originals for non-images
+  const webpFiles  = await fs.readdir(WEBP_DIR).catch(() => []);
+  const origFiles  = await fs.readdir(ORIGINALS).catch(() => []);
 
-  const items = await Promise.all(
-    paged.map(async (filename) => {
-      const ext      = path.extname(filename).toLowerCase();
-      const id       = filename.replace(ext, "");
-      const isImage  = [".jpg",".jpeg",".png",".gif",".webp",".avif"].includes(ext);
-      const thumbFile = `${id}-thumb.webp`;
-      const thumbExists = await fs.access(path.join(THUMBS, thumbFile)).then(() => true).catch(() => false);
+  const allItems = [
+    ...webpFiles.filter(f => !f.includes("-thumb")).map(f => ({
+      id: f.replace(".webp",""),
+      url: `/uploads/webp/${f}`,
+      thumbUrl: null,
+      isImage: true, ext: ".webp",
+    })),
+    ...origFiles.filter(f => {
+      const e = path.extname(f).toLowerCase();
+      return !IMAGE_EXTS.has(e); // only non-images from originals
+    }).map(f => ({
+      id: path.basename(f, path.extname(f)),
+      url: `/uploads/originals/${f}`,
+      thumbUrl: null,
+      isImage: false,
+      ext: path.extname(f).toLowerCase(),
+    })),
+  ].reverse();
 
-      return {
-        id,
-        filename,
-        url:      `/uploads/originals/${filename}`,
-        thumbUrl: thumbExists ? `/uploads/thumbs/${thumbFile}` : `/uploads/originals/${filename}`,
-        isImage,
-        ext,
-      };
-    })
-  );
+  // Attach thumbs
+  const thumbFiles = await fs.readdir(THUMBS).catch(() => []);
+  const thumbMap   = new Map(thumbFiles.map(f => [f.replace("-thumb.webp",""), `/uploads/thumbs/${f}`]));
 
-  return {
-    items,
-    total: files.length,
-    page,
-    perPage,
-    totalPages: Math.ceil(files.length / perPage),
-  };
+  const paged = allItems.slice((page-1)*perPage, page*perPage).map(item => ({
+    ...item,
+    thumbUrl: thumbMap.get(item.id) || item.url,
+  }));
+
+  return { items: paged, total: allItems.length, page, perPage };
 }
 
-// ── Delete a media item ───────────────────────────────────────────────────
 export async function deleteMedia(id) {
-  const files = await fs.readdir(ORIGINALS);
-  const match = files.find(f => f.startsWith(id));
-  if (!match) throw new Error("File not found");
-
-  const ext = path.extname(match);
-  await fs.rm(path.join(ORIGINALS, match)).catch(() => {});
-  await fs.rm(path.join(THUMBS, `${id}-thumb.webp`)).catch(() => {});
+  await Promise.all([
+    fs.rm(path.join(WEBP_DIR,   `${id}.webp`)).catch(()=>{}),
+    fs.rm(path.join(THUMBS,     `${id}-thumb.webp`)).catch(()=>{}),
+    ...[".jpg",".jpeg",".png",".gif",".webp",".avif"].map(e =>
+      fs.rm(path.join(ORIGINALS, `${id}${e}`)).catch(()=>{})
+    ),
+  ]);
   return { id, deleted: true };
 }

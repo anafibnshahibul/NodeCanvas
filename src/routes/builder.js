@@ -3,6 +3,23 @@ import { Project } from "../models/Project.js";
 
 const router = Router();
 
+// Helper function to convert JSON canvas to HTML
+function renderCanvasToHTML(node) {
+  if (!node) return "";
+  if (node.type === "text") return node.content || "";
+  const tag = node.tag;
+  if (!tag) return "";
+  const VOID = new Set(["img", "input", "br", "hr", "meta", "link", "area", "base", "col"]);
+  const STRIP = new Set(["data-nc-id", "data-nc-tag", "data-nc-container"]);
+  const attrs = Object.entries(node.attrs || {})
+    .filter(([k]) => !STRIP.has(k))
+    .map(([k, v]) => ` ${k}="${String(v).replace(/"/g, '&quot;')}"`)
+    .join("");
+  if (VOID.has(tag)) return `<${tag}${attrs}/>`;
+  const kids = (node.children || []).map(renderCanvasToHTML).join("");
+  return `<${tag}${attrs}>${kids}</${tag}>`;
+}
+
 // GET /builder/dashboard
 router.get("/dashboard", async (req, res, next) => {
   try {
@@ -39,23 +56,31 @@ router.get("/editor/:projectId/:pageId", async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// GET /builder/preview/:projectId — preview all pages
+// GET /builder/preview/:projectId — preview first page
 router.get("/preview/:projectId", async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.projectId).populate("pages");
     if (!project) return res.status(404).send("Project not found");
     const page = project.pages?.[0];
-    res.render("builder/preview", { project, page });
+    res.render("builder/preview", {
+      project,
+      page,
+      renderCanvas: renderCanvasToHTML
+    });
   } catch (e) { next(e); }
 });
 
-// GET /builder/preview/:projectId/:pageId
+// GET /builder/preview/:projectId/:pageId — preview specific page
 router.get("/preview/:projectId/:pageId", async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.projectId).populate("pages");
     const page = project?.pages?.find(p => p._id.toString() === req.params.pageId);
     if (!project || !page) return res.status(404).send("Page not found");
-    res.render("builder/preview", { project, page });
+    res.render("builder/preview", {
+      project,
+      page,
+      renderCanvas: renderCanvasToHTML
+    });
   } catch (e) { next(e); }
 });
 
