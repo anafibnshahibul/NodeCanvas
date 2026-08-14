@@ -1,157 +1,252 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ─────────────────────────────────────────────────────────────────────────────
+   NodeCanvas Builder — Custom component styles
+   Plain CSS only. Tailwind utility classes are handled by the CDN script.
+───────────────────────────────────────────────────────────────────────────── */
 
-/* ── Builder UI Component Classes ─────────────────────────────────────────── */
-@layer components {
+/* ── Google Fonts fallback (already loaded in <head>) ─────────────────────── */
+* { box-sizing: border-box; }
+body { font-family: 'Inter', system-ui, sans-serif; }
 
-  /* Left/Right panel property labels */
-  .prop-label {
-    @apply block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1;
-  }
+/* ── Scrollbar styling ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
-  .prop-input {
-    @apply w-full bg-[#12141f] text-xs text-gray-300 px-2.5 py-1.5
-           rounded-md border border-white/[0.06] outline-none
-           focus:border-violet-500/50 transition-colors font-mono;
-  }
+/* ── HTMX loading indicator ────────────────────────────────────────────────── */
+.htmx-indicator           { opacity: 0; transition: opacity 0.2s; }
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator { opacity: 1; }
 
-  .prop-select {
-    @apply w-full bg-[#12141f] text-xs text-gray-300 px-2 py-1.5
-           rounded-md border border-white/[0.06] outline-none
-           focus:border-violet-500/50 transition-colors cursor-pointer;
-  }
-
-  .prop-section {
-    @apply space-y-2;
-  }
-
-  .prop-section-title {
-    @apply text-[10px] font-semibold text-gray-500 uppercase tracking-widest
-           pb-2 border-b border-white/[0.06];
-  }
-
-  /* Left panel tab active state */
-  .left-tab.active {
-    @apply text-white bg-white/5;
-  }
-
-  /* Property panel tab active state */
-  .prop-tab.active {
-    @apply text-white border-b-2 border-violet-500;
-  }
-
-  /* Viewport toggle active state */
-  .viewport-btn.active {
-    @apply bg-[#1a1d27] text-white;
-  }
-
-  /* Flex alignment quick-pick buttons */
-  .flex-align-btn {
-    @apply flex-1 py-1.5 text-sm rounded border border-white/10
-           hover:bg-violet-600/30 hover:border-violet-500/50
-           transition-all cursor-pointer text-center;
-  }
-
-  /* HTMX method selector buttons */
-  .htmx-method-btn {
-    @apply flex-1 py-1 text-[10px] font-semibold rounded border border-white/10
-           text-gray-500 hover:text-white hover:border-violet-500/50 transition-all;
-  }
-  .htmx-method-btn.active {
-    @apply bg-violet-600/30 border-violet-500/50 text-violet-300;
-  }
-
-  /* Element library draggable tile */
-  .element-tile {
-    @apply flex flex-col items-center gap-1.5 p-2 rounded-lg
-           bg-[#12141f] border border-white/[0.06]
-           hover:border-violet-500/40 hover:bg-violet-600/10
-           cursor-grab active:cursor-grabbing transition-all
-           text-[10px] text-gray-400 hover:text-gray-200 text-center
-           select-none;
-  }
-
-  /* Canvas element hover/select highlight */
-  .nc-hover {
-    outline: 1.5px dashed rgba(139, 92, 246, 0.5) !important;
-    outline-offset: 2px;
-  }
-  .nc-selected {
-    outline: 2px solid #7c3aed !important;
-    outline-offset: 2px;
-  }
-
-  /* Element action toolbar (shown above selected element) */
-  .nc-toolbar {
-    @apply absolute -top-8 left-0 flex items-center gap-1
-           bg-violet-600 rounded-md px-2 py-1 text-[10px] text-white
-           shadow-lg z-50 pointer-events-auto;
-  }
-
-  /* Box model visual control */
-  .box-model-control {
-    @apply relative grid place-items-center
-           bg-[#12141f] border border-white/[0.06] rounded-lg
-           h-20 text-[10px] font-mono;
-  }
-  .box-model-control .box-top    { @apply absolute top-1 w-12 text-center; }
-  .box-model-control .box-bottom { @apply absolute bottom-1 w-12 text-center; }
-  .box-model-control .box-left   { @apply absolute left-1 w-10 text-center; }
-  .box-model-control .box-right  { @apply absolute right-1 w-10 text-center; }
-  .box-model-control .box-label  { @apply text-gray-600 font-semibold; }
-  .box-model-control input {
-    @apply bg-[#0f1117] border border-white/10 rounded px-1 py-0.5
-           text-center outline-none focus:border-violet-500/50 text-gray-300 w-full;
-  }
-
-  /* Layer tree item */
-  .layer-item {
-    @apply flex items-center gap-1.5 px-2 py-1 rounded-md text-xs
-           text-gray-400 hover:text-white hover:bg-white/5
-           cursor-pointer transition-colors;
-  }
-  .layer-item.selected {
-    @apply bg-violet-600/20 text-violet-300;
-  }
-
-  /* HTMX loading indicator — hidden by default, shown during requests */
-  .htmx-indicator { @apply opacity-0 transition-opacity; }
-  .htmx-request .htmx-indicator { @apply opacity-100; }
-  .htmx-request.htmx-indicator  { @apply opacity-100; }
+/* ── Toolbar & panel tab active states ─────────────────────────────────────── */
+.viewport-btn.active {
+  background: #1a1d27;
+  color: #fff;
+}
+.left-tab.active {
+  color: #fff;
+  background: rgba(255,255,255,0.05);
+}
+.prop-tab.active {
+  color: #fff;
+  border-bottom: 2px solid #7c3aed;
+}
+.htmx-method-btn.active {
+  background: rgba(124,58,237,0.3);
+  border-color: rgba(139,92,246,0.5);
+  color: #c4b5fd;
 }
 
-/* ── Canvas Drop Zone Animations ──────────────────────────────────────────── */
+/* ── Element library tile ───────────────────────────────────────────────────── */
+.element-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #12141f;
+  border: 1px solid rgba(255,255,255,0.06);
+  cursor: grab;
+  transition: border-color 0.15s, background 0.15s;
+  font-size: 10px;
+  color: #9ca3af;
+  text-align: center;
+  user-select: none;
+}
+.element-tile:hover {
+  border-color: rgba(139,92,246,0.4);
+  background: rgba(124,58,237,0.1);
+  color: #e5e7eb;
+}
+.element-tile:active { cursor: grabbing; }
+
+/* ── Property panel inputs ──────────────────────────────────────────────────── */
+.prop-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.prop-input {
+  width: 100%;
+  background: #12141f;
+  color: #d1d5db;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  outline: none;
+  font-family: 'JetBrains Mono', monospace;
+  transition: border-color 0.15s;
+}
+.prop-input:focus { border-color: rgba(124,58,237,0.5); }
+
+.prop-select {
+  width: 100%;
+  background: #12141f;
+  color: #d1d5db;
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.prop-select:focus { border-color: rgba(124,58,237,0.5); }
+
+.prop-section-title {
+  font-size: 10px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 8px;
+}
+
+/* ── Flex alignment quick-pick buttons ─────────────────────────────────────── */
+.flex-align-btn {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.flex-align-btn:hover {
+  background: rgba(124,58,237,0.3);
+  border-color: rgba(139,92,246,0.5);
+  color: #fff;
+}
+
+/* ── HTMX method buttons ────────────────────────────────────────────────────── */
+.htmx-method-btn {
+  flex: 1;
+  padding: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.htmx-method-btn:hover { color: #fff; border-color: rgba(139,92,246,0.5); }
+
+/* ── Canvas element selection/hover outlines ───────────────────────────────── */
+.nc-hover    { outline: 1.5px dashed rgba(139,92,246,0.5) !important; outline-offset: 2px; }
+.nc-selected { outline: 2px solid #7c3aed !important; outline-offset: 2px; }
+
+/* ── Element floating toolbar ───────────────────────────────────────────────── */
+.nc-toolbar {
+  position: absolute;
+  top: -32px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #7c3aed;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 10px;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  z-index: 9999;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+
+/* ── Drop zone active state ─────────────────────────────────────────────────── */
 @keyframes ncDropPulse {
-  0%, 100% { outline-color: rgba(139, 92, 246, 0.4); }
-  50%       { outline-color: rgba(139, 92, 246, 0.9); }
+  0%, 100% { outline-color: rgba(139,92,246,0.4); }
+  50%       { outline-color: rgba(139,92,246,0.9); }
 }
 .nc-drop-active {
-  outline: 2px dashed rgba(139, 92, 246, 0.6) !important;
+  outline: 2px dashed rgba(139,92,246,0.6) !important;
   animation: ncDropPulse 1s ease infinite;
 }
 
-/* ── Built-in Animation Presets (injected into exported sites) ─────────────── */
-@keyframes fadeIn      { from { opacity: 0 }             to { opacity: 1 } }
-@keyframes fadeOut     { from { opacity: 1 }             to { opacity: 0 } }
-@keyframes slideInLeft { from { transform: translateX(-40px); opacity: 0 } to { transform: translateX(0); opacity: 1 } }
-@keyframes slideInRight{ from { transform: translateX(40px);  opacity: 0 } to { transform: translateX(0); opacity: 1 } }
-@keyframes slideInUp   { from { transform: translateY(40px);  opacity: 0 } to { transform: translateY(0); opacity: 1 } }
-@keyframes slideInDown { from { transform: translateY(-40px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
-@keyframes zoomIn      { from { transform: scale(0.8);  opacity: 0 }       to { transform: scale(1);   opacity: 1 } }
-@keyframes zoomOut     { from { transform: scale(1.2);  opacity: 0 }       to { transform: scale(1);   opacity: 1 } }
-@keyframes bounce      { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-16px) } }
-@keyframes pulse       { 0%,100% { opacity: 1 } 50% { opacity: 0.5 } }
-@keyframes shake       { 0%,100% { transform: translateX(0) } 20%,60% { transform: translateX(-6px) } 40%,80% { transform: translateX(6px) } }
+/* ── Box model visual control ───────────────────────────────────────────────── */
+.box-model-control {
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: #12141f;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  height: 80px;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.box-model-control .box-top    { position: absolute; top: 4px; width: 48px; text-align: center; }
+.box-model-control .box-bottom { position: absolute; bottom: 4px; width: 48px; text-align: center; }
+.box-model-control .box-left   { position: absolute; left: 4px; width: 40px; text-align: center; }
+.box-model-control .box-right  { position: absolute; right: 4px; width: 40px; text-align: center; }
+.box-model-control .box-label  { color: #4b5563; font-weight: 600; }
+.box-model-control input {
+  background: #0f1117;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  padding: 2px 4px;
+  text-align: center;
+  outline: none;
+  color: #d1d5db;
+  width: 100%;
+  font-size: 10px;
+  font-family: inherit;
+}
+.box-model-control input:focus { border-color: rgba(124,58,237,0.5); }
 
-.nc-anim-fadeIn       { animation: fadeIn       var(--nc-dur,0.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
-.nc-anim-fadeOut      { animation: fadeOut      var(--nc-dur,0.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
-.nc-anim-slideInLeft  { animation: slideInLeft  var(--nc-dur,0.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
-.nc-anim-slideInRight { animation: slideInRight var(--nc-dur,0.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
-.nc-anim-slideInUp    { animation: slideInUp    var(--nc-dur,0.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
-.nc-anim-slideInDown  { animation: slideInDown  var(--nc-dur,0.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
-.nc-anim-zoomIn       { animation: zoomIn       var(--nc-dur,0.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
-.nc-anim-zoomOut      { animation: zoomOut      var(--nc-dur,0.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
-.nc-anim-bounce       { animation: bounce       var(--nc-dur,0.8s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
-.nc-anim-pulse        { animation: pulse        var(--nc-dur,1s)   var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,infinite) both; }
-.nc-anim-shake        { animation: shake        var(--nc-dur,0.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
+/* ── Layer tree items ───────────────────────────────────────────────────────── */
+.layer-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+.layer-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.layer-item.selected { background: rgba(124,58,237,0.2); color: #c4b5fd; }
+
+/* ── Page tabs (multipage) ──────────────────────────────────────────────────── */
+.page-tab-item { display: flex; align-items: center; }
+
+/* ── Animation keyframes (used by the builder preview + exports) ─────────────── */
+@keyframes fadeIn       { from { opacity:0 }              to { opacity:1 } }
+@keyframes fadeOut      { from { opacity:1 }              to { opacity:0 } }
+@keyframes slideInLeft  { from { transform:translateX(-40px); opacity:0 } to { transform:translateX(0); opacity:1 } }
+@keyframes slideInRight { from { transform:translateX(40px);  opacity:0 } to { transform:translateX(0); opacity:1 } }
+@keyframes slideInUp    { from { transform:translateY(40px);  opacity:0 } to { transform:translateY(0); opacity:1 } }
+@keyframes slideInDown  { from { transform:translateY(-40px); opacity:0 } to { transform:translateY(0); opacity:1 } }
+@keyframes zoomIn       { from { transform:scale(0.8); opacity:0 }        to { transform:scale(1);   opacity:1 } }
+@keyframes zoomOut      { from { transform:scale(1.2); opacity:0 }        to { transform:scale(1);   opacity:1 } }
+@keyframes bounce       { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-16px)} }
+@keyframes pulse        { 0%,100%{opacity:1} 50%{opacity:.5} }
+@keyframes shake        { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+
+.nc-anim-fadeIn       { animation: fadeIn       var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
+.nc-anim-fadeOut      { animation: fadeOut      var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
+.nc-anim-slideInLeft  { animation: slideInLeft  var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
+.nc-anim-slideInRight { animation: slideInRight var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
+.nc-anim-slideInUp    { animation: slideInUp    var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
+.nc-anim-slideInDown  { animation: slideInDown  var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
+.nc-anim-zoomIn       { animation: zoomIn       var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
+.nc-anim-zoomOut      { animation: zoomOut      var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
+.nc-anim-bounce       { animation: bounce       var(--nc-dur,.8s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }
+.nc-anim-pulse        { animation: pulse        var(--nc-dur,1s)  var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,infinite) both; }
+.nc-anim-shake        { animation: shake        var(--nc-dur,.5s) var(--nc-ease,ease) var(--nc-delay,0s) var(--nc-iter,1) both; }

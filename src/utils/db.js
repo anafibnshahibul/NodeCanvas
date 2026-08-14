@@ -1,9 +1,3 @@
-/**
- * db.js — Database connection.
- * Supports MongoDB (Mongoose) by default.
- * Uncomment the Sequelize block to switch to PostgreSQL.
- */
-
 import mongoose from "mongoose";
 
 export async function connectDB() {

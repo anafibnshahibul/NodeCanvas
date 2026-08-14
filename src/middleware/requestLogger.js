@@ -1,6 +1,3 @@
-/**
- * requestLogger.js — Concise dev logger with method color coding.
- */
 const COLORS = { GET: "\x1b[32m", POST: "\x1b[34m", PUT: "\x1b[33m", DELETE: "\x1b[31m", PATCH: "\x1b[35m" };
 const RESET  = "\x1b[0m";
 

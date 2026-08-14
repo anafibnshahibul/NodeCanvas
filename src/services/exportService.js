@@ -1,12 +1,3 @@
-/**
- * exportService.js — Core export engine.
- *
- * Converts the project's stored JSON canvas tree into:
- *   1. Static ZIP  → index.html + style.css + script.js
- *   2. WordPress   → theme folder with PHP templates + style.css + functions.php
- *   3. JSON dump   → raw project JSON
- */
-
 import path     from "path";
 import fs       from "fs/promises";
 import archiver from "archiver";

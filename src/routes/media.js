@@ -1,6 +1,3 @@
-/**
- * media.js — /api/media routes
- */
 import { Router } from "express";
 import multer     from "multer";
 import path       from "path";

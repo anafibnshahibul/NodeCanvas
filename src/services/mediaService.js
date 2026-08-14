@@ -1,9 +1,3 @@
-/**
- * mediaService.js — Handles file uploads and image optimization via Sharp.
- * Uploaded originals are stored in /uploads/originals/
- * Optimized thumbnails are generated in /uploads/thumbs/
- */
-
 import path   from "path";
 import fs     from "fs/promises";
 import sharp  from "sharp";

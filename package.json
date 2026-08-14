@@ -5,38 +5,29 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": "concurrently \"nodemon server.js\" \"npx tailwindcss -i ./public/builder/builder.css -o ./public/builder/builder.dist.css --watch\"",
-    "build:css": "npx tailwindcss -i ./public/builder/builder.css -o ./public/builder/builder.dist.css --minify",
-    "start": "node server.js",
-    "db:migrate": "node src/utils/dbMigrate.js",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest"
+    "dev": "concurrently \"node --watch server.js\" \"npx @tailwindcss/cli@next -i ./public/builder/builder.css -o ./public/builder/builder.dist.css --watch\"",
+    "build:css": "npx @tailwindcss/cli@next -i ./public/builder/builder.css -o ./public/builder/builder.dist.css --minify",
+    "start": "node server.js"
   },
   "dependencies": {
-    "archiver": "^6.0.1",
-    "compression": "^1.7.4",
+    "archiver": "^7.0.1",
+    "compression": "^1.7.5",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "ejs": "^3.1.9",
-    "express": "^4.18.2",
-    "express-rate-limit": "^7.1.5",
-    "helmet": "^7.1.0",
-    "mongoose": "^8.0.3",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "mongoose": "^8.9.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "pg": "^8.11.3",
-    "sequelize": "^6.35.2",
-    "sharp": "^0.33.1",
-    "uuid": "^9.0.1",
-    "ws": "^8.16.0"
+    "sharp": "^0.33.5",
+    "uuid": "^11.0.3",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.16",
-    "concurrently": "^8.2.2",
-    "nodemon": "^3.0.2",
-    "postcss": "^8.4.32",
-    "tailwindcss": "^3.4.0"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "@tailwindcss/cli": "^4.3.3",
+    "concurrently": "^9.2.4",
+    "tailwindcss": "^4.3.3"
+  }
 }

@@ -1,88 +1,59 @@
-/**
- * history.js — Undo/Redo stack via canvas HTML snapshots.
- * Keeps up to MAX_STACK snapshots of the canvas innerHTML.
- * Exposes window.history_undo / history_redo for toolbar buttons.
- */
+const MAX = 50;
+const past   = [];
+const future = [];
 
-const MAX_STACK = 50;
-const stack = [];   // past states
-const future = [];  // undone states (for redo)
+export function initHistory() {
+  window._historyUndo = undo;
+  window._historyRedo = redo;
+  updateBtns();
+}
 
-// ── Snapshot the current canvas state ─────────────────────────────────────
 export function pushHistory() {
   const canvas = document.getElementById("canvas");
   if (!canvas) return;
-
-  // Clone current state
-  const snapshot = canvas.cloneNode(true);
-  // Remove builder chrome before saving
-  snapshot.querySelectorAll(".nc-toolbar, .nc-selected, .nc-hover").forEach(el => {
-    el.classList?.remove("nc-selected", "nc-hover");
-    if (el.classList?.contains("nc-toolbar")) el.remove();
-  });
-
-  stack.push(snapshot.innerHTML);
-  if (stack.length > MAX_STACK) stack.shift();
-
-  // A new action invalidates the redo queue
+  const snap = canvas.innerHTML
+    .replace(/<div class="nc-toolbar"[^>]*>[\s\S]*?<\/div>/g, "")
+    .trim();
+  past.push(snap);
+  if (past.length > MAX) past.shift();
   future.length = 0;
-  updateButtonStates();
+  updateBtns();
 }
 
-// ── Restore a snapshot to canvas ──────────────────────────────────────────
-function restoreSnapshot(html) {
+function restore(html) {
   const canvas = document.getElementById("canvas");
   if (!canvas) return;
   canvas.innerHTML = html;
-
-  // Re-attach SortableJS on all restored containers
-  canvas.querySelectorAll("[data-nc-id]").forEach(el => {
-    if (el.dataset.ncContainer !== undefined) {
-      Sortable.create(el, {
-        group: { name: "canvas", put: true, pull: true },
-        animation: 150,
-        ghostClass: "nc-drop-active",
-        onAdd:  () => import("./canvas.js").then(m => m.onCanvasChange?.()),
-        onSort: () => import("./canvas.js").then(m => m.onCanvasChange?.()),
-      });
-    }
+  // Re-attach SortableJS on containers
+  canvas.querySelectorAll("[data-nc-container]").forEach(el => {
+    Sortable.create(el, {
+      group: { name: "canvas", put: true, pull: true },
+      animation: 150,
+      ghostClass: "nc-drop-active",
+      filter: ".nc-toolbar",
+    });
   });
-
-  // Re-render layers tree
   import("./layersPanel.js").then(m => m.renderLayersTree(canvas));
-  updateButtonStates();
+  updateBtns();
 }
 
-// ── Undo ──────────────────────────────────────────────────────────────────
-window.history_undo = function () {
-  if (stack.length === 0) return;
+function undo() {
+  if (!past.length) return;
   const canvas = document.getElementById("canvas");
+  future.push(canvas.innerHTML.replace(/<div class="nc-toolbar"[^>]*>[\s\S]*?<\/div>/g,"").trim());
+  restore(past.pop());
+}
 
-  // Push current state to future before restoring
-  const current = canvas.cloneNode(true);
-  current.querySelectorAll(".nc-toolbar").forEach(t => t.remove());
-  future.push(current.innerHTML);
-
-  restoreSnapshot(stack.pop());
-};
-
-// ── Redo ──────────────────────────────────────────────────────────────────
-window.history_redo = function () {
-  if (future.length === 0) return;
+function redo() {
+  if (!future.length) return;
   const canvas = document.getElementById("canvas");
+  past.push(canvas.innerHTML.replace(/<div class="nc-toolbar"[^>]*>[\s\S]*?<\/div>/g,"").trim());
+  restore(future.pop());
+}
 
-  // Save current to stack
-  const current = canvas.cloneNode(true);
-  current.querySelectorAll(".nc-toolbar").forEach(t => t.remove());
-  stack.push(current.innerHTML);
-
-  restoreSnapshot(future.pop());
-};
-
-// ── Update toolbar button disabled states ─────────────────────────────────
-function updateButtonStates() {
-  const undoBtn = document.getElementById("btn-undo");
-  const redoBtn = document.getElementById("btn-redo");
-  if (undoBtn) undoBtn.disabled = stack.length === 0;
-  if (redoBtn) redoBtn.disabled = future.length === 0;
+function updateBtns() {
+  const u = document.getElementById("btn-undo");
+  const r = document.getElementById("btn-redo");
+  if (u) u.disabled = past.length   === 0;
+  if (r) r.disabled = future.length === 0;
 }

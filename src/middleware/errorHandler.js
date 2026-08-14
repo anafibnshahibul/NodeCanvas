@@ -1,7 +1,3 @@
-/**
- * errorHandler.js — Centralized Express error handler.
- * Must be registered last in server.js (after all routes).
- */
 export function errorHandler(err, req, res, next) {
   const status  = err.status || err.statusCode || 500;
   const message = err.message || "Internal Server Error";

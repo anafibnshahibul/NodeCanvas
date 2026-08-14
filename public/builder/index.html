@@ -5,8 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NodeCanvas — Visual Builder</title>
 
-  <!-- Tailwind CSS (builder UI) -->
-  <link rel="stylesheet" href="/builder/builder.dist.css" />
+  <!-- Tailwind CSS via CDN (no build step required) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ["Inter", "system-ui", "sans-serif"],
+            mono:  ["JetBrains Mono", "monospace"],
+          },
+        }
+      }
+    }
+  </script>
+  <!-- Builder custom component styles -->
+  <link rel="stylesheet" href="/builder/builder.css" />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />

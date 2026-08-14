@@ -1,179 +1,143 @@
-/**
- * canvas.js — Core drag-and-drop engine and canvas state manager.
- * Responsibilities:
- *   - Accept drops from the element library sidebar
- *   - Manage the selected element reference
- *   - Serialize canvas state to JSON for saving
- *   - Provide the public API consumed by stylePanel, layersPanel, etc.
- */
+import { renderLayersTree }   from "./layersPanel.js";
+import { syncPanelToElement } from "./stylePanel.js";
+import { pushHistory }        from "./history.js";
+import { ELEMENT_DEFINITIONS } from "./elementLibrary.js";
 
-import { renderLayersTree }      from "./layersPanel.js";
-import { syncPanelToElement }    from "./stylePanel.js";
-import { pushHistory }           from "./history.js";
-import { ELEMENT_DEFINITIONS }   from "./elementLibrary.js";
-
-// ── Module State ─────────────────────────────────────────────────────────────
-let selectedElement = null;   // currently selected DOM node on canvas
-let copiedStyle     = null;   // clipboard for "Copy Style"
-let ncIdCounter     = 0;      // monotonic ID for nc-id attributes
+let selectedEl  = null;
+let ncIdCounter = 0;
 
 const canvas = document.getElementById("canvas");
 
-// ── SortableJS: make canvas children reorderable ──────────────────────────
-Sortable.create(canvas, {
-  group:     { name: "canvas", put: true, pull: false },
-  animation: 150,
-  ghostClass: "nc-drop-active",
-  onAdd:  () => { onCanvasChange(); },
-  onSort: () => { onCanvasChange(); },
-});
-
-// ── Initialise SortableJS on every nested container ───────────────────────
-function initNestedSortable(el) {
-  if (el.dataset.ncContainer !== undefined) return; // already initialized
-  el.dataset.ncContainer = "1";
-  Sortable.create(el, {
-    group:     { name: "canvas", put: true, pull: true },
+export function initCanvas() {
+  // Main canvas drop zone (SortableJS)
+  Sortable.create(canvas, {
+    group: { name: "canvas", put: true, pull: false },
     animation: 150,
     ghostClass: "nc-drop-active",
+    filter: ".nc-toolbar,#canvas-empty-hint",
     onAdd:  () => onCanvasChange(),
     onSort: () => onCanvasChange(),
   });
+
+  canvas.addEventListener("click", e => {
+    e.stopPropagation();
+    const el = e.target.closest("[data-nc-id]");
+    if (!el) { clearCanvasSelection(); return; }
+    selectElement(el);
+  });
+
+  canvas.addEventListener("mouseover", e => {
+    const el = e.target.closest("[data-nc-id]");
+    document.querySelectorAll(".nc-hover").forEach(n => n.classList.remove("nc-hover"));
+    if (el && el !== selectedEl) el.classList.add("nc-hover");
+  });
+  canvas.addEventListener("mouseleave", () => {
+    document.querySelectorAll(".nc-hover").forEach(n => n.classList.remove("nc-hover"));
+  });
+
+  document.addEventListener("click", e => {
+    if (!canvas.contains(e.target)) clearCanvasSelection();
+  });
 }
 
-// ── Drop a new element from the sidebar ──────────────────────────────────
-export function dropElement(tag, category) {
+// ── Drop a new element ────────────────────────────────────────────────────
+export function dropElement(tag) {
   const def  = ELEMENT_DEFINITIONS[tag] || {};
-  const node = document.createElement(tag);
+  const node = document.createElement(def.actualTag || tag);
   const id   = `nc-el-${++ncIdCounter}`;
 
   node.dataset.ncId  = id;
   node.dataset.ncTag = tag;
 
-  // Apply default styles
-  if (def.defaultStyle) {
-    Object.assign(node.style, def.defaultStyle);
-  }
+  if (def.defaultStyle) Object.assign(node.style, def.defaultStyle);
+  if (def.defaultHTML)  node.innerHTML   = def.defaultHTML;
+  else if (def.defaultText) node.textContent = def.defaultText;
+  if (def.defaultAttrs) Object.entries(def.defaultAttrs).forEach(([k,v]) => node.setAttribute(k, v));
 
-  // Apply default content/placeholder
-  if (def.defaultHTML) {
-    node.innerHTML = def.defaultHTML;
-  } else if (def.defaultText) {
-    node.textContent = def.defaultText;
-  }
-
-  // Set default attributes
-  if (def.defaultAttrs) {
-    Object.entries(def.defaultAttrs).forEach(([k, v]) => node.setAttribute(k, v));
-  }
-
-  // Container elements get nested sortable
   if (def.isContainer) {
     node.style.minHeight = node.style.minHeight || "60px";
     initNestedSortable(node);
   }
 
   canvas.appendChild(node);
-  hideEmptyHint();
+  document.getElementById("canvas-empty-hint")?.classList.add("hidden");
   selectElement(node);
   onCanvasChange();
 }
 
-// ── Element Selection ─────────────────────────────────────────────────────
-export function selectElement(el) {
-  // Deselect previous
-  if (selectedElement) {
-    selectedElement.classList.remove("nc-selected");
-    selectedElement.querySelector(".nc-toolbar")?.remove();
-  }
-
-  selectedElement = el;
-  el.classList.add("nc-selected");
-
-  // Inject floating toolbar above selected element
-  injectToolbar(el);
-
-  // Show properties panel
-  document.getElementById("panel-empty").classList.add("hidden");
-  document.getElementById("panel-properties").classList.remove("hidden");
-
-  // Populate the right panel with current element values
-  syncPanelToElement(el);
-
-  // Highlight layer in tree
-  document.querySelectorAll(".layer-item").forEach(li => {
-    li.classList.toggle("selected", li.dataset.ncId === el.dataset.ncId);
+// ── Nested sortable ───────────────────────────────────────────────────────
+function initNestedSortable(el) {
+  if (el.dataset.ncContainer) return;
+  el.dataset.ncContainer = "1";
+  Sortable.create(el, {
+    group: { name: "canvas", put: true, pull: true },
+    animation: 150,
+    ghostClass: "nc-drop-active",
+    filter: ".nc-toolbar",
+    onAdd:  () => onCanvasChange(),
+    onSort: () => onCanvasChange(),
   });
 }
 
-export function clearCanvasSelection() {
-  if (selectedElement) {
-    selectedElement.classList.remove("nc-selected");
-    selectedElement.querySelector(".nc-toolbar")?.remove();
-    selectedElement = null;
+// ── Selection ─────────────────────────────────────────────────────────────
+export function selectElement(el) {
+  if (selectedEl) {
+    selectedEl.classList.remove("nc-selected");
+    selectedEl.querySelector(":scope > .nc-toolbar")?.remove();
   }
-  document.getElementById("panel-empty").classList.remove("hidden");
-  document.getElementById("panel-properties").classList.add("hidden");
-}
+  selectedEl = el;
+  el.classList.add("nc-selected");
 
-export function getSelectedElement() { return selectedElement; }
-
-// ── Click handler (delegated from canvas div) ─────────────────────────────
-window.handleCanvasClick = function (e) {
-  e.stopPropagation();
-  const el = e.target.closest("[data-nc-id]");
-  if (!el) { clearCanvasSelection(); return; }
-  selectElement(el);
-};
-
-// ── Hover highlight ───────────────────────────────────────────────────────
-window.handleCanvasHover = function (e) {
-  const el = e.target.closest("[data-nc-id]");
-  document.querySelectorAll(".nc-hover").forEach(n => n.classList.remove("nc-hover"));
-  if (el && el !== selectedElement) el.classList.add("nc-hover");
-};
-
-window.clearHoverHighlight = function () {
-  document.querySelectorAll(".nc-hover").forEach(n => n.classList.remove("nc-hover"));
-};
-
-// ── Floating element toolbar ───────────────────────────────────────────────
-function injectToolbar(el) {
-  el.style.position = el.style.position || "relative";
+  // Floating toolbar
   const bar = document.createElement("div");
   bar.className = "nc-toolbar";
-  bar.innerHTML = `
-    <span class="font-mono opacity-70">&lt;${el.tagName.toLowerCase()}&gt;</span>
-    <button onclick="event.stopPropagation(); duplicateElement()" title="Duplicate" class="ml-1 hover:opacity-70">⧉</button>
-    <button onclick="event.stopPropagation(); deleteSelectedElement()" title="Delete" class="hover:text-red-300">✕</button>
-  `;
+  bar.innerHTML = `<span style="opacity:.7;font-family:monospace">&lt;${el.tagName.toLowerCase()}&gt;</span>
+    <button class="nc-tb-dup" title="Duplicate" style="margin-left:4px;background:none;border:none;color:#fff;cursor:pointer;font-size:14px">⧉</button>
+    <button class="nc-tb-del" title="Delete" style="background:none;border:none;color:#fca5a5;cursor:pointer;font-size:14px">✕</button>`;
   el.appendChild(bar);
+
+  bar.querySelector(".nc-tb-dup").addEventListener("click", e => { e.stopPropagation(); duplicateElement(el); });
+  bar.querySelector(".nc-tb-del").addEventListener("click", e => { e.stopPropagation(); pushHistory(); el.remove(); clearCanvasSelection(); onCanvasChange(); });
+
+  // Show properties panel
+  document.getElementById("panel-empty").style.display = "none";
+  const pp = document.getElementById("panel-properties");
+  pp.style.display = "flex";
+  pp.classList.remove("hidden");
+
+  syncPanelToElement(el);
+  highlightLayer(el.dataset.ncId);
 }
 
-// ── Context Menu Actions ──────────────────────────────────────────────────
-window.contextAction = function (action) {
-  const el = window.__ctxElement || selectedElement;
-  if (!el) return;
-  switch (action) {
-    case "duplicate":   duplicateElement(el); break;
-    case "copy-style":  copiedStyle = el.getAttribute("style"); break;
-    case "paste-style": if (copiedStyle) { el.setAttribute("style", copiedStyle); syncPanelToElement(el); } break;
-    case "wrap-div":    wrapInDiv(el); break;
-    case "move-up":     el.previousElementSibling?.before(el); onCanvasChange(); break;
-    case "move-down":   el.nextElementSibling?.after(el); onCanvasChange(); break;
-    case "delete":      el.remove(); clearCanvasSelection(); onCanvasChange(); break;
+export function clearCanvasSelection() {
+  if (selectedEl) {
+    selectedEl.classList.remove("nc-selected");
+    selectedEl.querySelector(":scope > .nc-toolbar")?.remove();
+    selectedEl = null;
   }
-};
+  document.getElementById("panel-empty").style.display = "";
+  const pp = document.getElementById("panel-properties");
+  pp.style.display = "none";
+  pp.classList.add("hidden");
+}
 
-function duplicateElement(el = selectedElement) {
-  if (!el) return;
+export function getSelectedElement() { return selectedEl; }
+
+// ── Public helpers exposed to main.js ─────────────────────────────────────
+window._duplicateSelected = () => selectedEl && duplicateElement(selectedEl);
+window._duplicateEl       = duplicateElement;
+window._wrapInDiv         = wrapInDiv;
+
+function duplicateElement(el) {
   pushHistory();
   const clone = el.cloneNode(true);
   clone.dataset.ncId = `nc-el-${++ncIdCounter}`;
-  clone.classList.remove("nc-selected");
+  clone.classList.remove("nc-selected","nc-hover");
   clone.querySelectorAll(".nc-toolbar").forEach(t => t.remove());
+  delete clone.dataset.ncContainer;
   el.after(clone);
-  if (clone.dataset.ncContainer !== undefined) initNestedSortable(clone);
+  const def = ELEMENT_DEFINITIONS[clone.dataset.ncTag];
+  if (def?.isContainer) initNestedSortable(clone);
   selectElement(clone);
   onCanvasChange();
 }
@@ -182,41 +146,51 @@ function wrapInDiv(el) {
   pushHistory();
   const wrapper = document.createElement("div");
   wrapper.dataset.ncId = `nc-el-${++ncIdCounter}`;
-  wrapper.style.cssText = "display:block; padding: 8px;";
+  wrapper.style.cssText = "display:block;padding:8px";
   el.parentNode.insertBefore(wrapper, el);
   wrapper.appendChild(el);
   initNestedSortable(wrapper);
   onCanvasChange();
 }
 
-window.duplicateElement     = duplicateElement;
-window.deleteSelectedElement = function () {
-  if (!selectedElement) return;
-  pushHistory();
-  selectedElement.remove();
-  clearCanvasSelection();
-  onCanvasChange();
-};
-
-// ── Canvas Change: update layers + serialize state ────────────────────────
+// ── Canvas change → update layers + re-init containers ───────────────────
 function onCanvasChange() {
-  // Re-init any new containers that dropped in
   canvas.querySelectorAll("[data-nc-id]").forEach(el => {
-    const def = ELEMENT_DEFINITIONS[el.tagName.toLowerCase()];
-    if (def?.isContainer && el.dataset.ncContainer === undefined) {
-      initNestedSortable(el);
-    }
+    const def = ELEMENT_DEFINITIONS[el.dataset.ncTag];
+    if (def?.isContainer && !el.dataset.ncContainer) initNestedSortable(el);
   });
-
   renderLayersTree(canvas);
-  serializeToHiddenInput();
-  updateEmptyHintVisibility();
+  updateHint();
 }
 
-// ── Serialise canvas DOM → JSON → hidden input (for HTMX save) ───────────
-function serializeToHiddenInput() {
-  const json = serializeNode(canvas);
-  document.getElementById("canvas-state").value = JSON.stringify(json);
+function updateHint() {
+  const hint = document.getElementById("canvas-empty-hint");
+  if (!hint) return;
+  hint.classList.toggle("hidden", !!canvas.querySelector("[data-nc-id]"));
+}
+
+function highlightLayer(ncId) {
+  document.querySelectorAll(".layer-item").forEach(li => {
+    li.classList.toggle("selected", li.dataset.ncId === ncId);
+  });
+}
+
+// ── Serialize / Deserialize ───────────────────────────────────────────────
+export function serializeCanvas() {
+  return serializeNode(canvas);
+}
+
+export function deserializeCanvas(json) {
+  canvas.innerHTML = "";
+  ncIdCounter = 0;
+  document.getElementById("canvas-empty-hint")?.classList.add("hidden");
+  if (!json) return;
+  const root = Array.isArray(json.children) ? json : { children: [json] };
+  root.children.forEach(child => {
+    const el = buildNode(child);
+    if (el) canvas.appendChild(el);
+  });
+  onCanvasChange();
 }
 
 function serializeNode(node) {
@@ -225,57 +199,25 @@ function serializeNode(node) {
     return t ? { type: "text", content: t } : null;
   }
   if (node.nodeType !== Node.ELEMENT_NODE) return null;
-
-  // Skip builder UI chrome
-  if (node.classList.contains("nc-toolbar") ||
-      node.id === "canvas-empty-hint") return null;
+  if (node.classList.contains("nc-toolbar") || node.id === "canvas-empty-hint") return null;
 
   const attrs = {};
   Array.from(node.attributes).forEach(a => {
     if (!["contenteditable"].includes(a.name)) attrs[a.name] = a.value;
   });
 
-  const children = Array.from(node.childNodes)
-    .map(serializeNode)
-    .filter(Boolean);
-
+  const children = Array.from(node.childNodes).map(serializeNode).filter(Boolean);
   return { tag: node.tagName.toLowerCase(), attrs, children };
 }
 
-// ── Deserialise JSON → DOM (for project load) ─────────────────────────────
-export function deserializeCanvas(json) {
-  canvas.innerHTML = "";
-  ncIdCounter = 0;
-  if (!json?.children) return;
-  json.children.forEach(child => {
-    const el = buildNode(child);
-    if (el) canvas.appendChild(el);
-  });
-  hideEmptyHint();
-  onCanvasChange();
-}
-
 function buildNode(def) {
+  if (!def) return null;
   if (def.type === "text") return document.createTextNode(def.content);
   const el = document.createElement(def.tag);
-  Object.entries(def.attrs || {}).forEach(([k, v]) => el.setAttribute(k, v));
+  Object.entries(def.attrs || {}).forEach(([k,v]) => el.setAttribute(k, v));
   if (!el.dataset.ncId) el.dataset.ncId = `nc-el-${++ncIdCounter}`;
-  (def.children || []).forEach(child => {
-    const childEl = buildNode(child);
-    if (childEl) el.appendChild(childEl);
-  });
-  const elemDef = ELEMENT_DEFINITIONS[def.tag];
+  (def.children || []).forEach(c => { const n = buildNode(c); if(n) el.appendChild(n); });
+  const elemDef = ELEMENT_DEFINITIONS[def.tag] || ELEMENT_DEFINITIONS[def.attrs?.["data-nc-tag"]];
   if (elemDef?.isContainer) initNestedSortable(el);
   return el;
-}
-
-// ── Utility ───────────────────────────────────────────────────────────────
-function hideEmptyHint() {
-  document.getElementById("canvas-empty-hint")?.classList.add("hidden");
-}
-function updateEmptyHintVisibility() {
-  const hint = document.getElementById("canvas-empty-hint");
-  if (!hint) return;
-  const hasElements = canvas.querySelector("[data-nc-id]");
-  hint.classList.toggle("hidden", !!hasElements);
 }
