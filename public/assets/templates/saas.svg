@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="saas-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="btn-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#saas-bg)"/>
+  <circle cx="300" cy="100" r="140" fill="#6366f1" opacity="0.15" filter="blur(40px)"/>
+  <!-- Nav header bar mockup -->
+  <rect x="40" y="30" width="520" height="36" rx="8" fill="#1e293b" opacity="0.6"/>
+  <circle cx="60" cy="48" r="8" fill="#6366f1"/>
+  <rect x="76" y="44" width="60" height="8" rx="4" fill="#94a3b8"/>
+  <rect x="440" y="40" width="100" height="16" rx="6" fill="#6366f1"/>
+  <!-- Badge -->
+  <rect x="230" y="90" width="140" height="20" rx="10" fill="#312e81" stroke="#4f46e5" stroke-width="1"/>
+  <text x="300" y="104" fill="#c7d2fe" font-family="system-ui,sans-serif" font-size="10" font-weight="700" text-anchor="middle">NEW v3.0 RELEASE</text>
+  <!-- Hero title lines -->
+  <rect x="140" y="125" width="320" height="24" rx="6" fill="#ffffff"/>
+  <rect x="180" y="158" width="240" height="18" rx="5" fill="#a5b4fc"/>
+  <!-- Subtitle -->
+  <rect x="160" y="190" width="280" height="10" rx="5" fill="#64748b"/>
+  <!-- Action buttons -->
+  <rect x="220" y="215" width="95" height="28" rx="6" fill="url(#btn-grad)"/>
+  <text x="267" y="233" fill="#ffffff" font-family="system-ui,sans-serif" font-size="11" font-weight="700" text-anchor="middle">Get Started</text>
+  <rect x="325" y="215" width="80" height="28" rx="6" fill="#334155" opacity="0.8"/>
+  <text x="365" y="233" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="11" font-weight="600" text-anchor="middle">Demo</text>
+  <!-- Metric card mockups -->
+  <rect x="80" y="265" width="130" height="85" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <rect x="95" y="280" width="40" height="14" rx="3" fill="#818cf8"/>
+  <rect x="95" y="302" width="80" height="8" rx="3" fill="#64748b"/>
+  <rect x="235" y="265" width="130" height="85" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <rect x="250" y="280" width="50" height="14" rx="3" fill="#34d399"/>
+  <rect x="250" y="302" width="70" height="8" rx="3" fill="#64748b"/>
+  <rect x="390" y="265" width="130" height="85" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <rect x="405" y="280" width="45" height="14" rx="3" fill="#f472b6"/>
+  <rect x="405" y="302" width="75" height="8" rx="3" fill="#64748b"/>
+</svg>

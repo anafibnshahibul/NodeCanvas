@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <rect width="600" height="400" fill="#141210"/>
+  <circle cx="300" cy="180" r="160" fill="#292524" opacity="0.4"/>
+  <text x="300" y="80" fill="#d97706" font-family="sans-serif" font-size="12" font-weight="700" letter-spacing="4" text-anchor="middle">ARTISAN DINING</text>
+  <text x="300" y="130" fill="#fef3c7" font-family="Georgia,serif" font-size="34" text-anchor="middle">L'Atelier Lumière</text>
+  <!-- Table form mockup -->
+  <rect x="120" y="170" width="360" height="170" rx="12" fill="#1c1917" stroke="#44403c" stroke-width="1.5"/>
+  <rect x="140" y="195" width="150" height="32" rx="6" fill="#292524" stroke="#57534e" stroke-width="1"/>
+  <rect x="310" y="195" width="150" height="32" rx="6" fill="#292524" stroke="#57534e" stroke-width="1"/>
+  <rect x="140" y="240" width="150" height="32" rx="6" fill="#292524" stroke="#57534e" stroke-width="1"/>
+  <rect x="310" y="240" width="150" height="32" rx="6" fill="#292524" stroke="#57534e" stroke-width="1"/>
+  <rect x="140" y="285" width="320" height="36" rx="6" fill="#d97706"/>
+  <text x="300" y="308" fill="#ffffff" font-family="sans-serif" font-size="13" font-weight="700" text-anchor="middle">Reserve Table</text>
+</svg>

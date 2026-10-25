@@ -1,0 +1,88 @@
+[
+  {
+    "id": "dcdf57ef-f4dc-4cdb-8bfa-5986f0b44902",
+    "_id": "dcdf57ef-f4dc-4cdb-8bfa-5986f0b44902",
+    "name": "Test Verification Suite Project",
+    "slug": "test-verification-suite-project-mvntbneh",
+    "userId": "default",
+    "pages": [
+      "40cf0355-d55e-4486-8fa4-55c110458d4f",
+      "78e9cb70-69ad-48fb-8da5-01bba34f39c4"
+    ],
+    "thumbnail": "/assets/templates/saas.svg",
+    "isPublished": false,
+    "globalMeta": {
+      "favicon": "",
+      "lang": "en",
+      "globalCSS": "",
+      "globalJS": "",
+      "customHTML": ""
+    },
+    "createdAt": "2026-10-25T12:37:16.985Z",
+    "updatedAt": "2026-10-25T12:37:17.007Z"
+  },
+  {
+    "id": "292a6d79-e407-41c3-b5d8-15670f778501",
+    "_id": "292a6d79-e407-41c3-b5d8-15670f778501",
+    "name": "Test Verification Suite Project",
+    "slug": "test-verification-suite-project-mvntckj3",
+    "userId": "default",
+    "pages": [
+      "5a4c72a0-970b-49ce-9a75-b85ed190ff3f",
+      "8a6fccae-2d3e-4ec2-9abc-dd7e9bd778ee"
+    ],
+    "thumbnail": "/assets/templates/saas.svg",
+    "isPublished": false,
+    "globalMeta": {
+      "favicon": "",
+      "lang": "en",
+      "globalCSS": "",
+      "globalJS": "",
+      "customHTML": ""
+    },
+    "createdAt": "2026-10-25T12:37:59.923Z",
+    "updatedAt": "2026-10-25T12:37:59.967Z"
+  },
+  {
+    "id": "5938b25d-1705-4cfa-a6f7-234ed85c85ae",
+    "_id": "5938b25d-1705-4cfa-a6f7-234ed85c85ae",
+    "name": "Diagnosis",
+    "slug": "diagnosis-mvnu6g4d",
+    "userId": "default",
+    "pages": [
+      "c8b7280c-cbe7-433d-8de5-76475c55908b"
+    ],
+    "thumbnail": "/assets/templates/blank.svg",
+    "isPublished": false,
+    "globalMeta": {
+      "favicon": "",
+      "lang": "en",
+      "globalCSS": "",
+      "globalJS": "",
+      "customHTML": ""
+    },
+    "createdAt": "2026-10-25T13:01:13.885Z",
+    "updatedAt": "2026-10-25T13:01:13.896Z"
+  },
+  {
+    "id": "706948a5-c190-47d0-a570-29047447911a",
+    "_id": "706948a5-c190-47d0-a570-29047447911a",
+    "name": "Diag2",
+    "slug": "diag2-mvnu6w9q",
+    "userId": "default",
+    "pages": [
+      "3911a2ab-3ca5-4cf0-b395-6629d05c3009"
+    ],
+    "thumbnail": "/assets/templates/blank.svg",
+    "isPublished": false,
+    "globalMeta": {
+      "favicon": "",
+      "lang": "en",
+      "globalCSS": "",
+      "globalJS": "",
+      "customHTML": ""
+    },
+    "createdAt": "2026-10-25T13:01:34.814Z",
+    "updatedAt": "2026-10-25T13:01:34.847Z"
+  }
+]

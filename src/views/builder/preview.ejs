@@ -52,9 +52,12 @@
 <!-- Multi-page nav -->
 <% if (project.pages && project.pages.length > 1) { %>
 <nav class="nc-page-nav">
-  <% project.pages.forEach(function(p) { %>
-    <a href="/builder/preview/<%= project._id %>/<%= p._id %>"
-       class="<%= page && p._id.toString() === page._id.toString() ? 'active' : '' %>">
+  <% project.pages.forEach(function(p) {
+    const pId = p._id || p.id;
+    const curId = page ? (page._id || page.id) : '';
+  %>
+    <a href="/builder/preview/<%= project._id || project.id %>/<%= pId %>"
+       class="<%= curId && pId && pId.toString() === curId.toString() ? 'active' : '' %>">
       <%= p.name %>
     </a>
   <% }); %>
@@ -69,7 +72,7 @@
     <div style="text-align:center">
       <p style="font-size:48px;margin:0">📄</p>
       <p style="margin:12px 0 0">This page has no content yet.</p>
-      <a href="/builder/editor/<%= project._id %>" style="color:#a78bfa;font-size:14px">← Go back to editor</a>
+      <a href="/builder/editor/<%= project._id || project.id %>" style="color:#a78bfa;font-size:14px">← Go back to editor</a>
     </div>
   </div>
 <% } %>
@@ -86,7 +89,7 @@
     <button onclick="setW('768px')">Tablet</button>
     <button onclick="setW('390px')">Mobile</button>
     <span style="color:#374151;margin:0 4px">·</span>
-    <a href="/builder/editor/<%= project._id %>/<%= page ? page._id : '' %>">← Edit</a>
+    <a href="/builder/editor/<%= project._id || project.id %>/<%= page ? (page._id || page.id) : '' %>">← Edit</a>
   </div>
 </div>
 

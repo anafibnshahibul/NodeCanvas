@@ -1,67 +1,97 @@
 import { Router } from "express";
+import { FULL_STACK_TEMPLATES } from "../utils/templatesData.js";
+import { Project } from "../models/Project.js";
+import { Page } from "../models/Page.js";
 
 const router = Router();
 
-const TEMPLATES = {
-  blank: {
-    tag: "div", attrs: {}, children: []
-  },
-  landing: {
-    tag: "div", attrs: { style: "font-family:system-ui,sans-serif" },
-    children: [
-      {
-        tag: "section",
-        attrs: { "data-nc-id": "hero", style: "padding:80px 40px;text-align:center;background:linear-gradient(135deg,#667eea,#764ba2);color:white;" },
-        children: [
-          { tag: "h1", attrs: { style: "font-size:3rem;font-weight:700;margin:0 0 16px" }, children: [{ type: "text", content: "Build Something Amazing" }] },
-          { tag: "p",  attrs: { style: "font-size:1.2rem;opacity:0.9;max-width:560px;margin:0 auto 32px" }, children: [{ type: "text", content: "Your tagline goes here." }] },
-          { tag: "button", attrs: { style: "padding:14px 32px;background:white;color:#7c3aed;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer" }, children: [{ type: "text", content: "Get Started" }] },
-        ]
-      },
-      {
-        tag: "section",
-        attrs: { "data-nc-id": "features", style: "padding:64px 40px;background:#f9fafb;" },
-        children: [
-          { tag: "h2", attrs: { style: "text-align:center;font-size:2rem;font-weight:700;margin-bottom:40px;color:#111827" }, children: [{ type: "text", content: "Features" }] },
-          { tag: "div", attrs: { style: "display:grid;grid-template-columns:repeat(3,1fr);gap:32px;max-width:960px;margin:0 auto" }, children: [
-            { tag: "div", attrs: { style: "background:white;padding:32px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1)" }, children: [{ tag: "h3", attrs: {}, children: [{ type: "text", content: "Feature One" }] }] },
-            { tag: "div", attrs: { style: "background:white;padding:32px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1)" }, children: [{ tag: "h3", attrs: {}, children: [{ type: "text", content: "Feature Two" }] }] },
-            { tag: "div", attrs: { style: "background:white;padding:32px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1)" }, children: [{ tag: "h3", attrs: {}, children: [{ type: "text", content: "Feature Three" }] }] },
-          ]}
-        ]
-      }
-    ]
-  },
-  contact: {
-    tag: "div", attrs: { style: "font-family:system-ui,sans-serif;padding:64px 40px;max-width:560px;margin:0 auto" },
-    children: [
-      { tag: "h1", attrs: { style: "font-size:2rem;font-weight:700;margin-bottom:8px" }, children: [{ type: "text", content: "Contact Us" }] },
-      { tag: "p",  attrs: { style: "color:#6b7280;margin-bottom:32px" }, children: [{ type: "text", content: "We'll get back to you within 24 hours." }] },
-      {
-        tag: "form",
-        attrs: {
-          "data-nc-id": "contact-form",
-          style: "display:flex;flex-direction:column;gap:16px",
-          "hx-post": "/api/contact",
-          "hx-target": "#form-result",
-          "hx-swap": "innerHTML"
-        },
-        children: [
-          { tag: "input", attrs: { type: "text", name: "name", placeholder: "Your name", style: "padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:1rem" } },
-          { tag: "input", attrs: { type: "email", name: "email", placeholder: "Email address", style: "padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:1rem" } },
-          { tag: "textarea", attrs: { name: "message", rows: "5", placeholder: "Your message", style: "padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:1rem;resize:vertical" }, children: [] },
-          { tag: "button", attrs: { type: "submit", style: "padding:12px;background:#7c3aed;color:white;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer" }, children: [{ type: "text", content: "Send Message" }] },
-        ]
-      },
-      { tag: "div", attrs: { id: "form-result", style: "margin-top:16px" }, children: [] }
-    ]
-  }
-};
+// GET /api/templates — list all available templates
+router.get("/", (req, res) => {
+  const templates = FULL_STACK_TEMPLATES.map(t => ({
+    id: t.id,
+    name: t.name,
+    category: t.category,
+    description: t.description,
+    thumbnail: t.thumbnail,
+    badge: t.badge,
+    gradient: t.gradient,
+  }));
+  res.json({ templates });
+});
 
-// GET /api/templates/:id/canvas
+// GET /api/templates/:id/canvas — get canvas for template
 router.get("/:id/canvas", (req, res) => {
-  const canvas = TEMPLATES[req.params.id] || TEMPLATES.blank;
-  res.json({ canvas });
+  const found = FULL_STACK_TEMPLATES.find(t => t.id === req.params.id);
+  const canvas = found?.canvas || FULL_STACK_TEMPLATES[0].canvas;
+  res.json({ canvas, template: found || FULL_STACK_TEMPLATES[0] });
+});
+
+// POST /api/templates/:id/instantiate — clone template into a brand new project
+router.post("/:id/instantiate", async (req, res, next) => {
+  try {
+    const template = FULL_STACK_TEMPLATES.find(t => t.id === req.params.id) || FULL_STACK_TEMPLATES[0];
+    const projectName = req.body.name || `${template.name} Site`;
+
+    const project = await Project.create({
+      name: projectName,
+      thumbnail: template.thumbnail,
+      globalMeta: {
+        lang: "en",
+        favicon: "",
+        globalCSS: "",
+        globalJS: "",
+        customHTML: ""
+      }
+    });
+
+    const homePage = await Page.create({
+      projectId: project.id,
+      name: "Home",
+      slug: "index",
+      order: 0,
+      isHomepage: true,
+      canvas: template.canvas,
+      meta: {
+        title: `${projectName} — Home`,
+        description: template.description
+      }
+    });
+
+    // If template has additional pages or contact, add them
+    if (template.id !== "blank" && template.id !== "contact") {
+      const contactTmpl = FULL_STACK_TEMPLATES.find(t => t.id === "contact");
+      if (contactTmpl) {
+        const contactPage = await Page.create({
+          projectId: project.id,
+          name: "Contact",
+          slug: "contact",
+          order: 1,
+          isHomepage: false,
+          canvas: contactTmpl.canvas,
+          meta: {
+            title: `Contact — ${projectName}`,
+            description: "Get in touch with us"
+          }
+        });
+        project.pages = [homePage.id, contactPage.id];
+      } else {
+        project.pages = [homePage.id];
+      }
+    } else {
+      project.pages = [homePage.id];
+    }
+
+    await project.save();
+
+    res.status(201).json({
+      success: true,
+      projectId: project.id,
+      homePageId: homePage.id,
+      redirectUrl: `/builder/editor/${project.id}/${homePage.id}`
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

@@ -5,6 +5,8 @@ const future = [];
 export function initHistory() {
   window._historyUndo = undo;
   window._historyRedo = redo;
+  window.history_undo = undo;
+  window.history_redo = redo;
   updateBtns();
 }
 

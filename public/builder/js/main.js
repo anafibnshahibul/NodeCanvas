@@ -11,6 +11,175 @@ const PROJECT_ID = window.NC_PROJECT_ID;
 const PAGE_ID    = window.NC_PAGE_ID;
 const PAGE_DATA  = window.NC_PAGE_DATA;
 
+window.setViewport = function(mode) {
+  const frame = document.getElementById("canvas-frame-container");
+  const widths = { desktop: "1280px", tablet: "768px", mobile: "390px" };
+  if (frame) frame.style.width = widths[mode] || "1280px";
+  document.querySelectorAll(".viewport-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.viewport === mode);
+    btn.classList.toggle("text-gray-400", btn.dataset.viewport !== mode);
+    btn.classList.toggle("text-white", btn.dataset.viewport === mode);
+  });
+};
+
+window.switchLeftTab = function(tab) {
+  ["elements", "layers", "templates"].forEach(t => {
+    const panel = document.getElementById(`tab-${t}`);
+    if (panel) panel.classList.toggle("hidden", t !== tab);
+  });
+  document.querySelectorAll(".left-tab").forEach(btn => {
+    const isActive = btn.dataset.tab === tab;
+    btn.classList.toggle("active", isActive);
+    btn.classList.toggle("text-gray-500", !isActive);
+  });
+};
+
+window.switchPropTab = function(tab) {
+  ["style", "content", "htmx", "anim"].forEach(t => {
+    const panel = document.getElementById(`ptab-${t}`);
+    if (panel) panel.classList.toggle("hidden", t !== tab);
+  });
+  document.querySelectorAll(".prop-tab").forEach(btn => {
+    const isActive = btn.dataset.ptab === tab;
+    btn.classList.toggle("active", isActive);
+    btn.classList.toggle("text-gray-500", !isActive);
+  });
+};
+
+window.toggleExportMenu = function() {
+  document.getElementById("export-menu")?.classList.toggle("hidden");
+};
+
+window.closeMediaPicker = function() {
+  document.getElementById("media-modal")?.classList.add("hidden");
+};
+
+window.updateElementAttr = function(attr, value) {
+  const el = getSelectedElement();
+  if (!el) return;
+  if (attr === "className") {
+    const kept = [...el.classList].filter(c => c.startsWith("nc-"));
+    el.className = (String(value || "").trim() + (kept.length ? " " + kept.join(" ") : "")).trim();
+    return;
+  }
+  if (value === "" || value === null || value === undefined) el.removeAttribute(attr);
+  else el.setAttribute(attr, value);
+};
+
+window.updateCustomAttrs = function(value) {
+  const el = getSelectedElement();
+  if (!el) return;
+  try {
+    const attrs = JSON.parse(value || "{}");
+    Object.keys(attrs).forEach(key => el.setAttribute(key, String(attrs[key])));
+    [...el.attributes].forEach(({ name }) => {
+      if (!(name in attrs) && !name.startsWith("data-nc-") && !["class", "id"].includes(name)) {
+        el.removeAttribute(name);
+      }
+    });
+  } catch {
+    // keep the value editable; do not crash on partial JSON
+  }
+};
+
+window.updateElementContent = function(kind, value) {
+  const el = getSelectedElement();
+  if (!el) return;
+  if (kind === "text") el.textContent = value;
+  if (kind === "html") el.innerHTML = value;
+};
+
+window.applyStyle = function(prop, value) {
+  const el = getSelectedElement();
+  if (!el) return;
+  pushHistory();
+  el.style[prop] = value;
+};
+
+window.applyHTMX = function(attr, value) {
+  const el = getSelectedElement();
+  if (!el) return;
+  if (value) el.setAttribute(attr, value); else el.removeAttribute(attr);
+};
+
+window.setHTMXMethod = function(method, btn) {
+  document.querySelectorAll(".htmx-method-btn").forEach(node => node.classList.toggle("active", node === btn));
+  const urlInput = document.getElementById("htmx-url-input") || document.getElementById("sp-hx-url");
+  if (urlInput) {
+    const currentUrl = urlInput.value;
+    if (currentUrl) {
+      const el = getSelectedElement();
+      if (el) {
+        const existing = ["hx-get","hx-post","hx-put","hx-delete"].find(name => el.hasAttribute(name));
+        if (existing && existing !== method) el.removeAttribute(existing);
+      }
+    }
+  }
+  if (btn) btn.classList.add("active");
+};
+
+window.applyHTMXMethod = function(value) {
+  const el = getSelectedElement();
+  if (!el) return;
+  const method = document.querySelector(".htmx-method-btn.active")?.dataset.method || "hx-get";
+  if (value) el.setAttribute(method, value); else el.removeAttribute(method);
+};
+
+window.setConditional = function(kind, action, value) {
+  const el = getSelectedElement();
+  if (!el) return;
+  const key = `data-nc-${kind}-${action}`;
+  if (value) el.setAttribute(key, value); else el.removeAttribute(key);
+};
+
+window.applyAnimPreset = function(value) {
+  const el = getSelectedElement();
+  if (!el) return;
+  el.classList.remove(...["fadeIn","fadeOut","slideInLeft","slideInRight","slideInUp","slideInDown","zoomIn","zoomOut","bounce","pulse","shake"].map(n => `nc-anim-${n}`));
+  if (value) el.classList.add(`nc-anim-${value}`);
+};
+
+window.applyTransition = function(type, value) {
+  const el = getSelectedElement();
+  if (!el) return;
+  if (type === "duration") el.style.setProperty("--nc-dur", value);
+  if (type === "delay") el.style.setProperty("--nc-delay", value);
+  if (type === "timing") el.style.setProperty("--nc-ease", value);
+  if (type === "iteration") el.style.setProperty("--nc-iter", value);
+};
+
+window.setAnimTrigger = function(value) {
+  const el = getSelectedElement();
+  if (!el) return;
+  el.dataset.animTrigger = value;
+};
+
+window.contextAction = function(action) {
+  const el = window._ctxElement || getSelectedElement();
+  if (!el) return;
+  switch (action) {
+    case "duplicate": window._duplicateEl?.(el); break;
+    case "copy-style": window._copiedStyle = el.getAttribute("style") || ""; break;
+    case "paste-style": if (window._copiedStyle) { el.setAttribute("style", window._copiedStyle); } break;
+    case "wrap-div": window._wrapInDiv?.(el); break;
+    case "move-up": el.previousElementSibling?.before(el); break;
+    case "move-down": el.nextElementSibling?.after(el); break;
+    case "delete":
+      pushHistory();
+      el.remove();
+      clearCanvasSelection();
+      break;
+  }
+};
+
+window.deleteSelectedElement = function() {
+  const el = getSelectedElement();
+  if (!el) return;
+  pushHistory();
+  el.remove();
+  clearCanvasSelection();
+};
+
 // ─────────────────────────────────────────────────────────────────────────
 // BOOT
 // ─────────────────────────────────────────────────────────────────────────
@@ -287,6 +456,18 @@ function wirePageTabs() {
         body: JSON.stringify({ name }),
       });
       window.location.reload();
+    });
+  });
+
+  // Duplicate page buttons
+  document.querySelectorAll(".duplicate-page-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.pageId;
+      const res = await fetch(`/api/projects/${PROJECT_ID}/pages/${id}/duplicate`, { method: "POST" });
+      if (res.ok) {
+        const { page } = await res.json();
+        window.location.href = `/builder/editor/${PROJECT_ID}/${page._id || page.id}`;
+      }
     });
   });
 

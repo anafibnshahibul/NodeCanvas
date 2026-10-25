@@ -3,93 +3,141 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>NodeCanvas — Dashboard</title>
-  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <title>NodeCanvas — Production Website Builder Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <script src="https://unpkg.com/htmx.org@2.0.3/dist/htmx.min.js"></script>
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; }
-    .project-card:hover .card-thumb { transform: scale(1.04); }
+    .project-card:hover .card-thumb { transform: scale(1.03); }
+    .project-card { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
   </style>
 </head>
-<body class="min-h-screen bg-[#0a0b0f] text-gray-100">
+<body class="min-h-screen bg-[#0a0b10] text-gray-100 flex flex-col">
 
-<!-- Top Nav -->
-<header class="border-b border-white/[0.06] bg-[#111318] sticky top-0 z-10">
-  <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+<!-- Top Navigation Bar -->
+<header class="border-b border-white/[0.08] bg-[#10121a]/90 backdrop-blur-md sticky top-0 z-30">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <div class="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center">
-        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/></svg>
+      <div class="w-9 h-9 bg-gradient-to-tr from-violet-600 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-violet-600/30">
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>
+        </svg>
       </div>
-      <span class="font-bold text-white">NodeCanvas</span>
+      <div>
+        <span class="font-extrabold text-base text-white tracking-tight">NodeCanvas</span>
+        <span class="ml-2 text-[10px] font-mono px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">v1.0 Production</span>
+      </div>
     </div>
-    <button id="btn-new-project"
-      class="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-semibold transition-all shadow-lg shadow-violet-600/20">
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-      New Project
-    </button>
+
+    <div class="flex items-center gap-3">
+      <span class="text-xs text-gray-400 font-mono hidden sm:inline-block">localhost:9080</span>
+      <button id="btn-new-project"
+        class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-lg text-sm font-semibold transition-all shadow-lg shadow-violet-600/25">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        New Project
+      </button>
+    </div>
   </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-6 py-10">
+<main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full">
 
-  <!-- Header -->
-  <div class="mb-8">
-    <h1 class="text-3xl font-bold text-white mb-1">Your Projects</h1>
-    <p class="text-gray-500 text-sm"><%= projects.length %> project<%= projects.length !== 1 ? "s" : "" %></p>
+  <!-- Header & Search -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">Your Projects</h1>
+      <p class="text-gray-400 text-sm">Create, customize, and export high-performance responsive websites.</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="relative w-full sm:w-64">
+        <input id="search-projects" type="text" placeholder="Search projects…"
+          class="w-full bg-[#12141f] border border-white/[0.08] rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-gray-500 outline-none focus:border-violet-500/60 transition-colors" />
+        <svg class="w-4 h-4 text-gray-500 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
   </div>
 
-  <!-- Grid -->
-  <% if (projects.length === 0) { %>
-  <div class="border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center py-32 text-center" id="empty-state">
-    <div class="w-16 h-16 bg-[#1a1d27] rounded-2xl flex items-center justify-center mb-4">
-      <svg class="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+  <!-- Empty State -->
+  <% if (!projects || projects.length === 0) { %>
+  <div class="border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center py-28 text-center bg-[#10121a]/50" id="empty-state">
+    <div class="w-16 h-16 bg-violet-600/10 border border-violet-500/20 rounded-2xl flex items-center justify-center mb-4 text-violet-400">
+      <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
     </div>
-    <p class="text-gray-400 font-medium mb-2">No projects yet</p>
-    <p class="text-gray-600 text-sm mb-6">Create your first project to get started</p>
-    <button id="btn-new-empty" class="px-5 py-2.5 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-semibold transition-all">
-      Create Project
+    <p class="text-gray-200 font-bold text-lg mb-1">No websites created yet</p>
+    <p class="text-gray-400 text-sm max-w-sm mb-6">Choose a full-stack template or start with a clean blank canvas.</p>
+    <button id="btn-new-empty" class="px-5 py-2.5 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-semibold transition-all text-white shadow-lg shadow-violet-600/20">
+      Choose a Template
     </button>
   </div>
   <% } else { %>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="projects-grid">
+
+  <!-- Projects Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="projects-grid">
     <% projects.forEach(function(project) { %>
-    <div class="project-card group bg-[#111318] border border-white/[0.06] rounded-xl overflow-hidden hover:border-violet-500/40 transition-all duration-200 cursor-pointer"
-         onclick="window.location='/builder/editor/<%= project._id %>'">
-      <div class="aspect-[4/3] bg-[#0a0b0f] overflow-hidden relative">
+    <div class="project-card group bg-[#11131a] border border-white/[0.07] rounded-xl overflow-hidden hover:border-violet-500/50 hover:shadow-xl hover:shadow-violet-950/20 flex flex-col"
+         data-name="<%= project.name.toLowerCase() %>">
+      <!-- Thumbnail -->
+      <div class="aspect-[16/10] bg-[#090a0f] overflow-hidden relative cursor-pointer" onclick="window.location='/builder/editor/<%= project._id || project.id %>'">
         <% if (project.thumbnail) { %>
           <img src="<%= project.thumbnail %>" alt="<%= project.name %>" class="card-thumb w-full h-full object-cover transition-transform duration-300"/>
         <% } else { %>
-          <div class="w-full h-full flex items-center justify-center">
-            <div class="grid grid-cols-2 gap-1.5 opacity-20">
-              <div class="w-8 h-8 bg-violet-500 rounded"></div>
-              <div class="w-8 h-8 bg-violet-700 rounded"></div>
-              <div class="w-8 h-8 bg-violet-700 rounded"></div>
-              <div class="w-8 h-8 bg-violet-500 rounded"></div>
+          <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-900 to-[#121420]">
+            <div class="w-12 h-12 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400 font-bold text-lg">
+              <%= project.name.slice(0, 1).toUpperCase() %>
             </div>
           </div>
         <% } %>
-        <!-- Hover overlay -->
-        <div class="absolute inset-0 bg-violet-900/0 group-hover:bg-violet-900/20 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-          <a href="/builder/editor/<%= project._id %>" onclick="event.stopPropagation()"
-             class="px-3 py-1.5 bg-white text-gray-900 rounded-md text-xs font-semibold hover:bg-gray-100 transition-all">
+
+        <!-- Overlay Action Bar -->
+        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2 backdrop-blur-[2px]">
+          <a href="/builder/editor/<%= project._id || project.id %>"
+             class="px-3.5 py-1.5 bg-violet-600 hover:bg-violet-500 text-white rounded-md text-xs font-semibold transition-all">
             Edit
           </a>
-          <a href="/builder/preview/<%= project._id %>" target="_blank" onclick="event.stopPropagation()"
-             class="px-3 py-1.5 bg-white/20 text-white rounded-md text-xs font-semibold hover:bg-white/30 transition-all backdrop-blur-sm">
+          <a href="/builder/preview/<%= project._id || project.id %>" target="_blank"
+             class="px-3.5 py-1.5 bg-white/20 hover:bg-white/30 text-white rounded-md text-xs font-semibold transition-all">
             Preview
           </a>
         </div>
       </div>
-      <div class="p-4 flex items-start justify-between">
-        <div class="flex-1 min-w-0">
-          <p class="font-semibold text-sm text-white truncate group-hover:text-violet-300 transition-colors"><%= project.name %></p>
-          <p class="text-[11px] text-gray-600 mt-0.5">Updated <%= new Date(project.updatedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) %></p>
+
+      <!-- Card Details -->
+      <div class="p-4 flex-1 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-sm text-white truncate group-hover:text-violet-300 transition-colors" title="<%= project.name %>">
+              <%= project.name %>
+            </h3>
+          </div>
+          <p class="text-[11px] text-gray-500 mt-1">
+            Updated <%= new Date(project.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+          </p>
         </div>
-        <button class="delete-btn opacity-0 group-hover:opacity-100 p-1.5 text-gray-600 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-all ml-2"
-                data-id="<%= project._id %>" title="Delete project">
-          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-        </button>
+
+        <!-- Footer Actions -->
+        <div class="mt-4 pt-3 border-t border-white/[0.05] flex items-center justify-between">
+          <a href="/builder/submissions/<%= project._id || project.id %>"
+             class="text-[11px] text-gray-400 hover:text-violet-300 flex items-center gap-1.5 transition-colors" title="View form submissions">
+            <svg class="w-3.5 h-3.5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            Leads
+          </a>
+
+          <div class="flex items-center gap-1">
+            <button class="duplicate-btn p-1.5 text-gray-400 hover:text-white rounded transition-colors"
+                    data-id="<%= project._id || project.id %>" title="Duplicate project">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            </button>
+            <button class="delete-btn p-1.5 text-gray-400 hover:text-red-400 rounded transition-colors"
+                    data-id="<%= project._id || project.id %>" title="Delete project">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <% }); %>
@@ -97,68 +145,132 @@
   <% } %>
 </main>
 
-<!-- New project name modal -->
-<div id="new-project-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center" style="background:rgba(0,0,0,.7);backdrop-filter:blur(4px)">
-  <div class="bg-[#111318] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl">
-    <h2 class="text-lg font-bold text-white mb-1">New Project</h2>
-    <p class="text-gray-500 text-sm mb-5">Give your project a name to get started.</p>
-    <input id="new-project-name" type="text" placeholder="My Awesome Website"
-      class="w-full bg-[#0a0b0f] border border-white/10 rounded-lg px-4 py-3 text-sm text-white outline-none focus:border-violet-500/60 transition-colors mb-4"/>
-    <div class="flex gap-3">
-      <button id="modal-cancel" class="flex-1 py-2.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">Cancel</button>
-      <button id="modal-create" class="flex-1 py-2.5 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-semibold text-white transition-all">
-        Create Project
+<!-- Create Project & Template Picker Modal -->
+<div id="new-project-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(0,0,0,0.8);backdrop-filter:blur(6px)">
+  <div class="bg-[#12141e] border border-white/10 rounded-2xl w-full max-w-4xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+    <!-- Modal Header -->
+    <div class="px-6 py-4 border-b border-white/[0.08] flex items-center justify-between shrink-0">
+      <div>
+        <h2 class="text-lg font-bold text-white">Create New Website</h2>
+        <p class="text-xs text-gray-400">Select a pre-built full-stack template or start with a clean slate.</p>
+      </div>
+      <button id="modal-close" class="text-gray-400 hover:text-white transition-colors p-1">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
+    </div>
+
+    <!-- Project Name Input -->
+    <div class="px-6 py-4 bg-[#0c0d14] border-b border-white/[0.06] flex items-center gap-4 shrink-0">
+      <label class="text-xs font-semibold text-gray-300 whitespace-nowrap">Project Name:</label>
+      <input id="new-project-name" type="text" placeholder="e.g. Acme Tech Global"
+        class="flex-1 bg-[#161824] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-violet-500/60 transition-colors" />
+    </div>
+
+    <!-- Templates Grid -->
+    <div class="p-6 overflow-y-auto flex-1">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="template-options">
+        <% if (templates && templates.length) { %>
+          <% templates.forEach(function(tmpl) { %>
+          <div class="template-card border border-white/[0.08] hover:border-violet-500/60 rounded-xl p-3 bg-[#161824] hover:bg-[#1c1f30] transition-all cursor-pointer group flex flex-col justify-between"
+               onclick="selectTemplate('<%= tmpl.id %>')">
+            <div>
+              <div class="aspect-[16/10] bg-[#090a0f] rounded-lg overflow-hidden relative mb-3">
+                <img src="<%= tmpl.thumbnail %>" alt="<%= tmpl.name %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <span class="absolute top-2 right-2 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-black/70 text-violet-300 border border-white/10">
+                  <%= tmpl.badge || tmpl.category %>
+                </span>
+              </div>
+              <h4 class="text-sm font-bold text-white group-hover:text-violet-300 transition-colors"><%= tmpl.name %></h4>
+              <p class="text-xs text-gray-400 mt-1 line-clamp-2"><%= tmpl.description %></p>
+            </div>
+            <button class="mt-3 w-full py-2 bg-violet-600/30 hover:bg-violet-600 text-violet-200 hover:text-white rounded-lg text-xs font-semibold transition-all">
+              Use Template
+            </button>
+          </div>
+          <% }); %>
+        <% } %>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-const modal    = document.getElementById("new-project-modal");
-const nameInput= document.getElementById("new-project-name");
+const modal = document.getElementById("new-project-modal");
+const nameInput = document.getElementById("new-project-name");
 
-function openModal() { modal.classList.remove("hidden"); nameInput.value=""; setTimeout(()=>nameInput.focus(),50); }
-function closeModal() { modal.classList.add("hidden"); }
+function openModal() {
+  modal.classList.remove("hidden");
+  nameInput.value = "";
+  setTimeout(() => nameInput.focus(), 60);
+}
+
+function closeModal() {
+  modal.classList.add("hidden");
+}
 
 document.getElementById("btn-new-project")?.addEventListener("click", openModal);
 document.getElementById("btn-new-empty")?.addEventListener("click", openModal);
-document.getElementById("modal-cancel")?.addEventListener("click", closeModal);
-modal?.addEventListener("click", e => { if(e.target===modal) closeModal(); });
+document.getElementById("modal-close")?.addEventListener("click", closeModal);
+modal?.addEventListener("click", e => { if (e.target === modal) closeModal(); });
 
-nameInput?.addEventListener("keydown", e => { if(e.key==="Enter") createProject(); });
-document.getElementById("modal-create")?.addEventListener("click", createProject);
-
-async function createProject() {
-  const name = nameInput.value.trim() || "Untitled Project";
-  const btn  = document.getElementById("modal-create");
-  btn.disabled = true;
-  btn.textContent = "Creating…";
+// Select template and create project
+async function selectTemplate(templateId) {
+  const name = nameInput.value.trim() || "My New Website";
   try {
-    const res  = await fetch("/api/projects", {
+    const res = await fetch("/api/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name, templateId }),
     });
     const data = await res.json();
-    if (data.project?._id) {
-      window.location.href = `/builder/editor/${data.project._id}`;
+    if (data.project?._id || data.project?.id) {
+      window.location.href = `/builder/editor/${data.project._id || data.project.id}`;
     }
-  } catch(e) {
-    btn.disabled = false;
-    btn.textContent = "Create Project";
+  } catch (err) {
+    alert("Could not create project: " + err.message);
   }
 }
+
+// Search filter
+document.getElementById("search-projects")?.addEventListener("input", e => {
+  const query = e.target.value.toLowerCase().trim();
+  document.querySelectorAll(".project-card").forEach(card => {
+    const name = card.dataset.name || "";
+    card.style.display = name.includes(query) ? "" : "none";
+  });
+});
+
+// Duplicate project
+document.querySelectorAll(".duplicate-btn").forEach(btn => {
+  btn.addEventListener("click", async e => {
+    e.stopPropagation();
+    btn.disabled = true;
+    try {
+      const res = await fetch(`/api/projects/${btn.dataset.id}/duplicate`, { method: "POST" });
+      if (res.ok) window.location.reload();
+    } catch (err) {
+      alert("Duplicate failed");
+      btn.disabled = false;
+    }
+  });
+});
 
 // Delete project
 document.querySelectorAll(".delete-btn").forEach(btn => {
   btn.addEventListener("click", async e => {
     e.stopPropagation();
-    if(!confirm("Delete this project? This cannot be undone.")) return;
-    await fetch(`/api/projects/${btn.dataset.id}`, { method: "DELETE" });
-    btn.closest(".project-card").style.opacity = "0";
-    btn.closest(".project-card").style.transform = "scale(0.95)";
-    btn.closest(".project-card").style.transition = "all 0.2s";
-    setTimeout(() => btn.closest(".project-card").remove(), 200);
+    if (!confirm("Are you sure you want to delete this project? This cannot be undone.")) return;
+    try {
+      const res = await fetch(`/api/projects/${btn.dataset.id}`, { method: "DELETE" });
+      if (res.ok) {
+        const card = btn.closest(".project-card");
+        card.style.opacity = "0";
+        card.style.transform = "scale(0.95)";
+        setTimeout(() => card.remove(), 200);
+      }
+    } catch (err) {
+      alert("Delete failed");
+    }
   });
 });
 </script>

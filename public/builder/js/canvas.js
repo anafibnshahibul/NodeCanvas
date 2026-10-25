@@ -121,6 +121,15 @@ export function clearCanvasSelection() {
   pp.classList.add("hidden");
 }
 
+window.deleteSelectedElement = function() {
+  const el = getSelectedElement();
+  if (!el) return;
+  pushHistory();
+  el.remove();
+  clearCanvasSelection();
+  onCanvasChange();
+};
+
 export function getSelectedElement() { return selectedEl; }
 
 // ── Public helpers exposed to main.js ─────────────────────────────────────

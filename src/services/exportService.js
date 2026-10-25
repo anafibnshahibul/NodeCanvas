@@ -76,7 +76,9 @@ function buildNavLinks(pages, currentPage) {
   if (pages.length <= 1) return "";
   return pages.map(p => {
     const href = p.isHomepage ? "index.html" : `${p.slug}.html`;
-    const active = p._id.toString() === currentPage._id.toString();
+    const pId = p._id || p.id;
+    const curId = currentPage._id || currentPage.id;
+    const active = pId && curId && pId.toString() === curId.toString();
     return `<a href="${href}" style="color:${active?"#a78bfa":"#9ca3af"};text-decoration:none;font-size:14px">${p.name}</a>`;
   }).join("");
 }

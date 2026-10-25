@@ -1,0 +1,2030 @@
+[
+  {
+    "id": "blank",
+    "name": "Blank Canvas",
+    "category": "Basic",
+    "description": "A clean, empty canvas ready for your custom creation from scratch.",
+    "thumbnail": "/assets/templates/blank.svg",
+    "gradient": "from-gray-800 to-gray-900",
+    "badge": "Minimal",
+    "canvas": {
+      "tag": "div",
+      "attrs": {
+        "style": "min-height:400px;display:flex;align-items:center;justify-content:center;padding:60px 20px;font-family:system-ui,sans-serif;"
+      },
+      "children": [
+        {
+          "tag": "div",
+          "attrs": {
+            "style": "text-align:center;max-width:500px;"
+          },
+          "children": [
+            {
+              "tag": "h1",
+              "attrs": {
+                "style": "font-size:2rem;font-weight:700;color:#111827;margin-bottom:8px;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Start Building Here"
+                }
+              ]
+            },
+            {
+              "tag": "p",
+              "attrs": {
+                "style": "color:#6b7280;font-size:15px;margin-bottom:24px;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Drag elements from the left panel or use pre-built sections."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "_id": "blank",
+    "createdAt": "2026-10-25T06:34:42.739Z",
+    "updatedAt": "2026-10-25T06:34:42.739Z"
+  },
+  {
+    "id": "saas",
+    "name": "SaaS & AI Platform",
+    "category": "Software",
+    "description": "High-converting modern tech landing page with hero, stats, features grid, pricing table, and newsletter.",
+    "thumbnail": "/assets/templates/saas.svg",
+    "gradient": "from-blue-900 to-indigo-950",
+    "badge": "Popular",
+    "canvas": {
+      "tag": "div",
+      "attrs": {
+        "style": "font-family:system-ui,-apple-system,sans-serif;color:#111827;background:#ffffff;"
+      },
+      "children": [
+        {
+          "tag": "header",
+          "attrs": {
+            "data-nc-id": "saas-nav",
+            "style": "display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:#0f172a;color:#ffffff;border-bottom:1px solid rgba(255,255,255,0.08);"
+          },
+          "children": [
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "display:flex;align-items:center;gap:12px;font-weight:800;font-size:18px;letter-spacing:-0.02em;"
+              },
+              "children": [
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "style": "width:32px;height:32px;background:linear-gradient(135deg,#6366f1,#a855f7);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:16px;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "⚡"
+                    }
+                  ]
+                },
+                {
+                  "tag": "span",
+                  "attrs": {},
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Nebula AI"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "nav",
+              "attrs": {
+                "style": "display:flex;gap:28px;align-items:center;font-size:14px;color:#94a3b8;"
+              },
+              "children": [
+                {
+                  "tag": "a",
+                  "attrs": {
+                    "href": "#features",
+                    "style": "text-decoration:none;color:#cbd5e1;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Features"
+                    }
+                  ]
+                },
+                {
+                  "tag": "a",
+                  "attrs": {
+                    "href": "#pricing",
+                    "style": "text-decoration:none;color:#cbd5e1;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Pricing"
+                    }
+                  ]
+                },
+                {
+                  "tag": "a",
+                  "attrs": {
+                    "href": "#testimonials",
+                    "style": "text-decoration:none;color:#cbd5e1;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Reviews"
+                    }
+                  ]
+                },
+                {
+                  "tag": "a",
+                  "attrs": {
+                    "href": "/builder/editor",
+                    "style": "padding:8px 18px;background:#6366f1;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Get Started Free"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "section",
+          "attrs": {
+            "data-nc-id": "saas-hero",
+            "style": "padding:100px 40px 90px;background:radial-gradient(circle at 50% 20%,#1e1b4b 0%,#090d16 100%);color:#ffffff;text-align:center;position:relative;"
+          },
+          "children": [
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "max-width:840px;margin:0 auto;"
+              },
+              "children": [
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:9999px;font-size:12px;color:#a5b4fc;margin-bottom:24px;font-weight:600;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "🚀 Version 3.0 Released — Autonomous Agent Workflows"
+                    }
+                  ]
+                },
+                {
+                  "tag": "h1",
+                  "attrs": {
+                    "style": "font-size:3.75rem;font-weight:900;line-height:1.1;letter-spacing:-0.03em;margin:0 0 20px;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Scale Your Software with "
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "style": "background:linear-gradient(90deg,#818cf8,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Intelligent Workflows"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "p",
+                  "attrs": {
+                    "style": "font-size:1.25rem;color:#94a3b8;line-height:1.6;margin:0 auto 36px;max-width:640px;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Eliminate repetitive tasks and streamline cloud engineering with self-optimizing pipelines designed for high-velocity teams."
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;"
+                  },
+                  "children": [
+                    {
+                      "tag": "a",
+                      "attrs": {
+                        "href": "#pricing",
+                        "style": "padding:14px 34px;background:#6366f1;color:#fff;border-radius:8px;font-weight:700;text-decoration:none;box-shadow:0 0 30px rgba(99,102,241,0.5);"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Start 14-Day Free Trial →"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "a",
+                      "attrs": {
+                        "href": "#features",
+                        "style": "padding:14px 28px;background:rgba(255,255,255,0.08);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;border:1px solid rgba(255,255,255,0.15);"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Watch Live Demo"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "display:grid;grid-template-columns:repeat(3,1fr);gap:24px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px 32px;"
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "tag": "div",
+                          "attrs": {
+                            "style": "font-size:2.2rem;font-weight:800;color:#818cf8;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "99.99%"
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "attrs": {
+                            "style": "font-size:12px;color:#94a3b8;margin-top:4px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "Uptime Guaranteed"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "div",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "tag": "div",
+                          "attrs": {
+                            "style": "font-size:2.2rem;font-weight:800;color:#34d399;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "10M+"
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "attrs": {
+                            "style": "font-size:12px;color:#94a3b8;margin-top:4px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "API Requests Daily"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "div",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "tag": "div",
+                          "attrs": {
+                            "style": "font-size:2.2rem;font-weight:800;color:#f472b6;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "4.9/5"
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "attrs": {
+                            "style": "font-size:12px;color:#94a3b8;margin-top:4px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "User Satisfaction"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "section",
+          "attrs": {
+            "id": "features",
+            "style": "padding:90px 40px;background:#f8fafc;"
+          },
+          "children": [
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "text-align:center;max-width:640px;margin:0 auto 60px;"
+              },
+              "children": [
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "style": "color:#6366f1;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.1em;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Architecture"
+                    }
+                  ]
+                },
+                {
+                  "tag": "h2",
+                  "attrs": {
+                    "style": "font-size:2.4rem;font-weight:800;color:#0f172a;margin:8px 0 16px;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Built for Modern Engineering"
+                    }
+                  ]
+                },
+                {
+                  "tag": "p",
+                  "attrs": {
+                    "style": "color:#64748b;font-size:16px;line-height:1.6;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Everything you need to automate workflows, analyze performance, and deploy instantly."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1120px;margin:0 auto;"
+              },
+              "children": [
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "background:#ffffff;padding:32px;border-radius:14px;border:1px solid #e2e8f0;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);"
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "font-size:32px;margin-bottom:16px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "⚡"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "h3",
+                      "attrs": {
+                        "style": "font-size:1.2rem;font-weight:700;color:#0f172a;margin:0 0 10px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Real-time Execution"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "p",
+                      "attrs": {
+                        "style": "color:#64748b;font-size:14px;line-height:1.6;margin:0;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Zero-latency pipeline synchronization with WebSockets and event streams."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "background:#ffffff;padding:32px;border-radius:14px;border:1px solid #e2e8f0;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);"
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "font-size:32px;margin-bottom:16px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "🛡️"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "h3",
+                      "attrs": {
+                        "style": "font-size:1.2rem;font-weight:700;color:#0f172a;margin:0 0 10px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Enterprise Security"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "p",
+                      "attrs": {
+                        "style": "color:#64748b;font-size:14px;line-height:1.6;margin:0;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "SOC2 compliance, role-based access control, and end-to-end payload encryption."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "background:#ffffff;padding:32px;border-radius:14px;border:1px solid #e2e8f0;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);"
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "font-size:32px;margin-bottom:16px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "📊"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "h3",
+                      "attrs": {
+                        "style": "font-size:1.2rem;font-weight:700;color:#0f172a;margin:0 0 10px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Deep Observability"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "p",
+                      "attrs": {
+                        "style": "color:#64748b;font-size:14px;line-height:1.6;margin:0;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Granular telemetry, distributed tracing, and instant alert dispatching."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "section",
+          "attrs": {
+            "id": "contact-section",
+            "style": "padding:80px 40px;background:#0f172a;color:#ffffff;"
+          },
+          "children": [
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "max-width:580px;margin:0 auto;text-align:center;"
+              },
+              "children": [
+                {
+                  "tag": "h2",
+                  "attrs": {
+                    "style": "font-size:2.2rem;font-weight:800;margin:0 0 12px;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Ready to Accelerate Your Team?"
+                    }
+                  ]
+                },
+                {
+                  "tag": "p",
+                  "attrs": {
+                    "style": "color:#94a3b8;margin:0 0 32px;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Request a custom enterprise demo and get 30 days of VIP access."
+                    }
+                  ]
+                },
+                {
+                  "tag": "form",
+                  "attrs": {
+                    "style": "display:flex;flex-direction:column;gap:14px;text-align:left;",
+                    "hx-post": "/api/forms/submit",
+                    "hx-target": "#saas-form-response",
+                    "hx-swap": "innerHTML"
+                  },
+                  "children": [
+                    {
+                      "tag": "input",
+                      "attrs": {
+                        "type": "hidden",
+                        "name": "formName",
+                        "value": "SaaS Demo Request"
+                      }
+                    },
+                    {
+                      "tag": "input",
+                      "attrs": {
+                        "type": "text",
+                        "name": "name",
+                        "placeholder": "Your Full Name",
+                        "required": "true",
+                        "style": "padding:12px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;font-size:14px;outline:none;"
+                      }
+                    },
+                    {
+                      "tag": "input",
+                      "attrs": {
+                        "type": "email",
+                        "name": "email",
+                        "placeholder": "work@company.com",
+                        "required": "true",
+                        "style": "padding:12px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;font-size:14px;outline:none;"
+                      }
+                    },
+                    {
+                      "tag": "textarea",
+                      "attrs": {
+                        "name": "message",
+                        "rows": "3",
+                        "placeholder": "Tell us about your project requirements...",
+                        "style": "padding:12px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;font-size:14px;outline:none;resize:vertical;"
+                      },
+                      "children": []
+                    },
+                    {
+                      "tag": "button",
+                      "attrs": {
+                        "type": "submit",
+                        "style": "padding:14px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:background 0.2s;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Send Demo Request →"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "id": "saas-form-response",
+                    "style": "margin-top:16px;"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "footer",
+          "attrs": {
+            "style": "padding:40px;background:#090d16;color:#64748b;text-align:center;font-size:13px;border-top:1px solid rgba(255,255,255,0.06);"
+          },
+          "children": [
+            {
+              "tag": "p",
+              "attrs": {
+                "style": "margin:0;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "© 2026 Nebula AI Platform Inc. Built with NodeCanvas."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "_id": "saas",
+    "createdAt": "2026-10-25T06:34:42.749Z",
+    "updatedAt": "2026-10-25T06:34:42.749Z"
+  },
+  {
+    "id": "portfolio",
+    "name": "Agency & Studio Portfolio",
+    "category": "Design",
+    "description": "Dark luxury agency aesthetic with case studies, client logos, service breakdown, and project inquiry.",
+    "thumbnail": "/assets/templates/portfolio.svg",
+    "gradient": "from-emerald-900 to-teal-950",
+    "badge": "Creative",
+    "canvas": {
+      "tag": "div",
+      "attrs": {
+        "style": "font-family:system-ui,sans-serif;background:#0c0d12;color:#ffffff;min-height:100vh;"
+      },
+      "children": [
+        {
+          "tag": "section",
+          "attrs": {
+            "style": "padding:100px 40px 80px;max-width:1100px;margin:0 auto;text-align:left;"
+          },
+          "children": [
+            {
+              "tag": "span",
+              "attrs": {
+                "style": "font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:#10b981;font-weight:700;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Crafting Digital Excellence"
+                }
+              ]
+            },
+            {
+              "tag": "h1",
+              "attrs": {
+                "style": "font-size:3.5rem;font-weight:900;line-height:1.1;margin:16px 0 24px;letter-spacing:-0.03em;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "We design brands & build interactive products for visionary founders."
+                }
+              ]
+            },
+            {
+              "tag": "p",
+              "attrs": {
+                "style": "font-size:1.2rem;color:#9ca3af;max-width:680px;line-height:1.7;margin:0 0 36px;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "A design-led engineering collective bridging the gap between bespoke aesthetics and cutting-edge web performance."
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "display:flex;gap:16px;"
+              },
+              "children": [
+                {
+                  "tag": "a",
+                  "attrs": {
+                    "href": "#projects",
+                    "style": "padding:14px 30px;background:#10b981;color:#0c0d12;font-weight:700;border-radius:8px;text-decoration:none;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Explore Selected Works"
+                    }
+                  ]
+                },
+                {
+                  "tag": "a",
+                  "attrs": {
+                    "href": "#inquiry",
+                    "style": "padding:14px 30px;background:transparent;color:#ffffff;border:1px solid rgba(255,255,255,0.2);border-radius:8px;font-weight:600;text-decoration:none;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Start a Project"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "section",
+          "attrs": {
+            "id": "projects",
+            "style": "padding:60px 40px 100px;max-width:1100px;margin:0 auto;"
+          },
+          "children": [
+            {
+              "tag": "h2",
+              "attrs": {
+                "style": "font-size:1.8rem;font-weight:800;margin-bottom:36px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:16px;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Selected Projects (2025–2026)"
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "display:grid;grid-template-columns:repeat(2,1fr);gap:32px;"
+              },
+              "children": [
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "background:#161922;border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden;padding:28px;"
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "height:200px;background:linear-gradient(135deg,#064e3b,#022c22);border-radius:10px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;font-size:40px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "🌐"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "h3",
+                      "attrs": {
+                        "style": "font-size:1.3rem;font-weight:700;margin:0 0 8px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Chronos Financial OS"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "p",
+                      "attrs": {
+                        "style": "color:#9ca3af;font-size:14px;margin:0 0 16px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Comprehensive institutional trading dashboard and cross-chain liquidation monitor."
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "style": "font-size:11px;padding:4px 10px;background:rgba(16,185,129,0.15);color:#34d399;border-radius:99px;font-weight:600;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "FinTech / React / WebSockets"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "background:#161922;border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden;padding:28px;"
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "height:200px;background:linear-gradient(135deg,#1e1b4b,#311042);border-radius:10px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;font-size:40px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "✨"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "h3",
+                      "attrs": {
+                        "style": "font-size:1.3rem;font-weight:700;margin:0 0 8px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Aura Spatial Sound"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "p",
+                      "attrs": {
+                        "style": "color:#9ca3af;font-size:14px;margin:0 0 16px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Next-gen immersive 3D audio experience with real-time waveform spatialization."
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "style": "font-size:11px;padding:4px 10px;background:rgba(168,85,247,0.15);color:#c084fc;border-radius:99px;font-weight:600;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Hardware / WebGL / Audio"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "section",
+          "attrs": {
+            "id": "inquiry",
+            "style": "padding:80px 40px;background:#12141c;border-top:1px solid rgba(255,255,255,0.06);"
+          },
+          "children": [
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "max-width:600px;margin:0 auto;"
+              },
+              "children": [
+                {
+                  "tag": "h2",
+                  "attrs": {
+                    "style": "font-size:2rem;font-weight:800;margin:0 0 10px;text-align:center;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Have a project in mind?"
+                    }
+                  ]
+                },
+                {
+                  "tag": "p",
+                  "attrs": {
+                    "style": "color:#9ca3af;text-align:center;margin:0 0 32px;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Tell us about your timeline and budget — we'll reply within 24 hours."
+                    }
+                  ]
+                },
+                {
+                  "tag": "form",
+                  "attrs": {
+                    "style": "display:flex;flex-direction:column;gap:14px;",
+                    "hx-post": "/api/forms/submit",
+                    "hx-target": "#agency-inquiry-result",
+                    "hx-swap": "innerHTML"
+                  },
+                  "children": [
+                    {
+                      "tag": "input",
+                      "attrs": {
+                        "type": "hidden",
+                        "name": "formName",
+                        "value": "Agency Project Inquiry"
+                      }
+                    },
+                    {
+                      "tag": "input",
+                      "attrs": {
+                        "type": "text",
+                        "name": "name",
+                        "placeholder": "Your Name",
+                        "required": "true",
+                        "style": "padding:12px 16px;background:#0c0d12;border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:14px;"
+                      }
+                    },
+                    {
+                      "tag": "input",
+                      "attrs": {
+                        "type": "email",
+                        "name": "email",
+                        "placeholder": "Your Email Address",
+                        "required": "true",
+                        "style": "padding:12px 16px;background:#0c0d12;border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:14px;"
+                      }
+                    },
+                    {
+                      "tag": "textarea",
+                      "attrs": {
+                        "name": "scope",
+                        "rows": "4",
+                        "placeholder": "Describe the project scope, goals, and target release date...",
+                        "style": "padding:12px 16px;background:#0c0d12;border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:14px;resize:vertical;"
+                      },
+                      "children": []
+                    },
+                    {
+                      "tag": "button",
+                      "attrs": {
+                        "type": "submit",
+                        "style": "padding:14px;background:#10b981;color:#0c0d12;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Submit Inquiry →"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "id": "agency-inquiry-result",
+                    "style": "margin-top:16px;"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "_id": "portfolio",
+    "createdAt": "2026-10-25T06:34:42.751Z",
+    "updatedAt": "2026-10-25T06:34:42.751Z"
+  },
+  {
+    "id": "ecommerce",
+    "name": "Modern E-Commerce Store",
+    "category": "Commerce",
+    "description": "Sleek retail storefront with promo banner, product catalogue cards, pricing badges, and customer trust signals.",
+    "thumbnail": "/assets/templates/ecommerce.svg",
+    "gradient": "from-amber-900 to-orange-950",
+    "badge": "Retail",
+    "canvas": {
+      "tag": "div",
+      "attrs": {
+        "style": "font-family:system-ui,sans-serif;color:#18181b;background:#ffffff;"
+      },
+      "children": [
+        {
+          "tag": "div",
+          "attrs": {
+            "style": "background:#000000;color:#f4f4f5;text-align:center;padding:10px 16px;font-size:12px;font-weight:600;letter-spacing:0.05em;"
+          },
+          "children": [
+            {
+              "type": "text",
+              "content": "🔥 SEASON OPENING SALE — GET 20% OFF ALL ITEMS WITH CODE 'NODECANVAS'"
+            }
+          ]
+        },
+        {
+          "tag": "header",
+          "attrs": {
+            "style": "display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid #e4e4e7;"
+          },
+          "children": [
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "font-weight:900;font-size:22px;letter-spacing:-0.03em;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "VANGUARD / APPAREL"
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "display:flex;gap:24px;font-size:14px;font-weight:500;"
+              },
+              "children": [
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "style": "cursor:pointer;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "New In"
+                    }
+                  ]
+                },
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "style": "cursor:pointer;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Outerwear"
+                    }
+                  ]
+                },
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "style": "cursor:pointer;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Footwear"
+                    }
+                  ]
+                },
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "style": "cursor:pointer;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Accessories"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "display:flex;align-items:center;gap:16px;"
+              },
+              "children": [
+                {
+                  "tag": "button",
+                  "attrs": {
+                    "style": "padding:8px 16px;background:#18181b;color:#fff;border-radius:6px;border:none;font-size:13px;font-weight:600;cursor:pointer;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Cart (0)"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "section",
+          "attrs": {
+            "style": "padding:64px 48px;max-width:1200px;margin:0 auto;"
+          },
+          "children": [
+            {
+              "tag": "h2",
+              "attrs": {
+                "style": "font-size:1.8rem;font-weight:800;margin:0 0 32px;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Featured Collection"
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "display:grid;grid-template-columns:repeat(3,1fr);gap:32px;"
+              },
+              "children": [
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "border:1px solid #e4e4e7;border-radius:12px;overflow:hidden;background:#fafafa;"
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "height:240px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:50px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "🧥"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "padding:20px;"
+                      },
+                      "children": [
+                        {
+                          "tag": "h3",
+                          "attrs": {
+                            "style": "font-size:16px;font-weight:700;margin:0 0 6px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "Technical Parka Jacket"
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "attrs": {
+                            "style": "display:flex;align-items:center;justify-content:space-between;margin-top:12px;"
+                          },
+                          "children": [
+                            {
+                              "tag": "span",
+                              "attrs": {
+                                "style": "font-size:18px;font-weight:800;color:#000;"
+                              },
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "content": "$280.00"
+                                }
+                              ]
+                            },
+                            {
+                              "tag": "button",
+                              "attrs": {
+                                "style": "padding:6px 14px;background:#000;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;"
+                              },
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "content": "Add to Bag"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "border:1px solid #e4e4e7;border-radius:12px;overflow:hidden;background:#fafafa;"
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "height:240px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:50px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "👟"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "padding:20px;"
+                      },
+                      "children": [
+                        {
+                          "tag": "h3",
+                          "attrs": {
+                            "style": "font-size:16px;font-weight:700;margin:0 0 6px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "Aeroknit Runner Elite"
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "attrs": {
+                            "style": "display:flex;align-items:center;justify-content:space-between;margin-top:12px;"
+                          },
+                          "children": [
+                            {
+                              "tag": "span",
+                              "attrs": {
+                                "style": "font-size:18px;font-weight:800;color:#000;"
+                              },
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "content": "$165.00"
+                                }
+                              ]
+                            },
+                            {
+                              "tag": "button",
+                              "attrs": {
+                                "style": "padding:6px 14px;background:#000;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;"
+                              },
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "content": "Add to Bag"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "border:1px solid #e4e4e7;border-radius:12px;overflow:hidden;background:#fafafa;"
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "height:240px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:50px;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "🎒"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "padding:20px;"
+                      },
+                      "children": [
+                        {
+                          "tag": "h3",
+                          "attrs": {
+                            "style": "font-size:16px;font-weight:700;margin:0 0 6px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "Waterproof Commuter Pack"
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "attrs": {
+                            "style": "display:flex;align-items:center;justify-content:space-between;margin-top:12px;"
+                          },
+                          "children": [
+                            {
+                              "tag": "span",
+                              "attrs": {
+                                "style": "font-size:18px;font-weight:800;color:#000;"
+                              },
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "content": "$120.00"
+                                }
+                              ]
+                            },
+                            {
+                              "tag": "button",
+                              "attrs": {
+                                "style": "padding:6px 14px;background:#000;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;"
+                              },
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "content": "Add to Bag"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "_id": "ecommerce",
+    "createdAt": "2026-10-25T06:34:42.753Z",
+    "updatedAt": "2026-10-25T06:34:42.753Z"
+  },
+  {
+    "id": "blog",
+    "name": "Tech & Engineering Blog",
+    "category": "Editorial",
+    "description": "Clean publication layout with hero story, category tags, author cards, and newsletter subscription.",
+    "thumbnail": "/assets/templates/blog.svg",
+    "gradient": "from-orange-900 to-red-950",
+    "badge": "Content",
+    "canvas": {
+      "tag": "div",
+      "attrs": {
+        "style": "font-family:system-ui,sans-serif;color:#18181b;background:#ffffff;line-height:1.6;"
+      },
+      "children": [
+        {
+          "tag": "header",
+          "attrs": {
+            "style": "padding:24px 48px;border-bottom:1px solid #f4f4f5;display:flex;align-items:center;justify-content:space-between;"
+          },
+          "children": [
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "font-weight:900;font-size:24px;color:#09090b;letter-spacing:-0.03em;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "The Byte Protocol."
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "font-size:14px;color:#71717a;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Insights on Distributed Systems & AI"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "main",
+          "attrs": {
+            "style": "max-width:880px;margin:48px auto;padding:0 24px;"
+          },
+          "children": [
+            {
+              "tag": "article",
+              "attrs": {
+                "style": "margin-bottom:64px;border-bottom:1px solid #f4f4f5;padding-bottom:48px;"
+              },
+              "children": [
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "style": "font-size:12px;font-weight:700;color:#ea580c;text-transform:uppercase;letter-spacing:0.08em;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Featured Architecture"
+                    }
+                  ]
+                },
+                {
+                  "tag": "h1",
+                  "attrs": {
+                    "style": "font-size:2.8rem;font-weight:800;color:#09090b;line-height:1.2;margin:12px 0 16px;letter-spacing:-0.02em;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Designing Zero-Allocation Systems in Modern Web Infrastructure"
+                    }
+                  ]
+                },
+                {
+                  "tag": "p",
+                  "attrs": {
+                    "style": "color:#52525b;font-size:1.15rem;margin:0 0 20px;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "How we refactored memory buffering in our WebSocket transport to reduce p99 latencies by 68% under heavy concurrent workload."
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "display:flex;align-items:center;gap:12px;font-size:13px;color:#71717a;"
+                  },
+                  "children": [
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "style": "font-weight:600;color:#18181b;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "By Alex Vance"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "•"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Oct 24, 2026"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "•"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "8 min read"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "_id": "blog",
+    "createdAt": "2026-10-25T06:34:42.755Z",
+    "updatedAt": "2026-10-25T06:34:42.755Z"
+  },
+  {
+    "id": "restaurant",
+    "name": "Artisan Bistro & Dining",
+    "category": "Hospitality",
+    "description": "Atmospheric culinary layout featuring chef specials, interactive menu items, and reservation booking.",
+    "thumbnail": "/assets/templates/restaurant.svg",
+    "gradient": "from-amber-950 to-stone-900",
+    "badge": "Dining",
+    "canvas": {
+      "tag": "div",
+      "attrs": {
+        "style": "font-family:system-ui,Georgia,serif;background:#141210;color:#fdfbf7;"
+      },
+      "children": [
+        {
+          "tag": "section",
+          "attrs": {
+            "style": "padding:120px 40px;text-align:center;background:radial-gradient(circle at 50% 30%,#2d241c 0%,#141210 100%);"
+          },
+          "children": [
+            {
+              "tag": "span",
+              "attrs": {
+                "style": "font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:#d97706;font-family:sans-serif;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Authentic French Cuisine"
+                }
+              ]
+            },
+            {
+              "tag": "h1",
+              "attrs": {
+                "style": "font-size:3.8rem;font-weight:400;margin:16px 0 20px;letter-spacing:0.02em;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "L'Atelier Lumière"
+                }
+              ]
+            },
+            {
+              "tag": "p",
+              "attrs": {
+                "style": "font-size:1.2rem;color:#a8a29e;max-width:540px;margin:0 auto 36px;font-style:italic;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Seasonal culinary artistry celebrating heritage French traditions and farm-to-table ingredients."
+                }
+              ]
+            },
+            {
+              "tag": "a",
+              "attrs": {
+                "href": "#reserve",
+                "style": "padding:14px 32px;background:#d97706;color:#ffffff;text-decoration:none;font-weight:600;font-family:sans-serif;border-radius:4px;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Reserve a Table"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "section",
+          "attrs": {
+            "id": "reserve",
+            "style": "padding:70px 40px;background:#1c1917;max-width:640px;margin:0 auto;border-radius:12px;"
+          },
+          "children": [
+            {
+              "tag": "h2",
+              "attrs": {
+                "style": "text-align:center;font-size:1.8rem;margin:0 0 24px;"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Online Table Booking"
+                }
+              ]
+            },
+            {
+              "tag": "form",
+              "attrs": {
+                "style": "display:grid;grid-template-columns:1fr 1fr;gap:16px;font-family:sans-serif;",
+                "hx-post": "/api/forms/submit",
+                "hx-target": "#dining-reserve-result",
+                "hx-swap": "innerHTML"
+              },
+              "children": [
+                {
+                  "tag": "input",
+                  "attrs": {
+                    "type": "hidden",
+                    "name": "formName",
+                    "value": "Restaurant Table Reservation"
+                  }
+                },
+                {
+                  "tag": "input",
+                  "attrs": {
+                    "type": "text",
+                    "name": "guestName",
+                    "placeholder": "Guest Name",
+                    "required": "true",
+                    "style": "padding:12px;background:#292524;border:1px solid #44403c;color:#fff;border-radius:6px;"
+                  }
+                },
+                {
+                  "tag": "input",
+                  "attrs": {
+                    "type": "tel",
+                    "name": "phone",
+                    "placeholder": "Phone Number",
+                    "required": "true",
+                    "style": "padding:12px;background:#292524;border:1px solid #44403c;color:#fff;border-radius:6px;"
+                  }
+                },
+                {
+                  "tag": "input",
+                  "attrs": {
+                    "type": "date",
+                    "name": "date",
+                    "required": "true",
+                    "style": "padding:12px;background:#292524;border:1px solid #44403c;color:#fff;border-radius:6px;"
+                  }
+                },
+                {
+                  "tag": "input",
+                  "attrs": {
+                    "type": "number",
+                    "name": "guests",
+                    "placeholder": "Number of Guests (1-8)",
+                    "min": "1",
+                    "max": "8",
+                    "required": "true",
+                    "style": "padding:12px;background:#292524;border:1px solid #44403c;color:#fff;border-radius:6px;"
+                  }
+                },
+                {
+                  "tag": "button",
+                  "attrs": {
+                    "type": "submit",
+                    "style": "grid-column:span 2;padding:14px;background:#d97706;color:#fff;border:none;border-radius:6px;font-weight:700;cursor:pointer;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Confirm Reservation →"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attrs": {
+                "id": "dining-reserve-result",
+                "style": "margin-top:16px;"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "_id": "restaurant",
+    "createdAt": "2026-10-25T06:34:42.757Z",
+    "updatedAt": "2026-10-25T06:34:42.757Z"
+  },
+  {
+    "id": "contact",
+    "name": "Contact & Support",
+    "category": "Forms",
+    "description": "Dedicated contact page with office coordinates, department directory, and interactive validated inquiry form.",
+    "thumbnail": "/assets/templates/contact.svg",
+    "gradient": "from-pink-900 to-rose-950",
+    "badge": "Support",
+    "canvas": {
+      "tag": "div",
+      "attrs": {
+        "style": "font-family:system-ui,sans-serif;padding:80px 40px;background:#f9fafb;min-height:100vh;color:#111827;"
+      },
+      "children": [
+        {
+          "tag": "div",
+          "attrs": {
+            "style": "max-width:960px;margin:0 auto;display:grid;grid-template-columns:1fr 1.2fr;gap:64px;align-items:start;"
+          },
+          "children": [
+            {
+              "tag": "div",
+              "attrs": {},
+              "children": [
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "style": "font-size:12px;color:#7c3aed;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Get in touch"
+                    }
+                  ]
+                },
+                {
+                  "tag": "h1",
+                  "attrs": {
+                    "style": "font-size:2.8rem;font-weight:900;line-height:1.15;margin:8px 0 16px;color:#111827;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "We're here to help."
+                    }
+                  ]
+                },
+                {
+                  "tag": "p",
+                  "attrs": {
+                    "style": "color:#4b5563;font-size:16px;line-height:1.6;margin:0 0 32px;"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Have questions about our enterprise plans, custom deployments, or technical integration? Drop us a line."
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "style": "display:flex;flex-direction:column;gap:16px;"
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "display:flex;gap:12px;align-items:center;"
+                      },
+                      "children": [
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "style": "font-size:20px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "📍"
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "style": "color:#374151;font-size:14px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "Innovation Boulevard 42, San Francisco, CA"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "display:flex;gap:12px;align-items:center;"
+                      },
+                      "children": [
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "style": "font-size:20px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "✉️"
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "style": "color:#374151;font-size:14px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "support@nodecanvas.io"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "display:flex;gap:12px;align-items:center;"
+                      },
+                      "children": [
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "style": "font-size:20px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "⏱️"
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "style": "color:#374151;font-size:14px;"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "content": "Monday — Friday, 9:00am — 6:00pm PST"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attrs": {
+                "style": "background:#ffffff;padding:40px;border-radius:16px;border:1px solid #e5e7eb;box-shadow:0 10px 25px -5px rgba(0,0,0,0.05);"
+              },
+              "children": [
+                {
+                  "tag": "form",
+                  "attrs": {
+                    "style": "display:flex;flex-direction:column;gap:16px;",
+                    "hx-post": "/api/forms/submit",
+                    "hx-target": "#contact-page-response",
+                    "hx-swap": "innerHTML"
+                  },
+                  "children": [
+                    {
+                      "tag": "input",
+                      "attrs": {
+                        "type": "hidden",
+                        "name": "formName",
+                        "value": "General Contact Page"
+                      }
+                    },
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "style": "display:grid;grid-template-columns:1fr 1fr;gap:12px;"
+                      },
+                      "children": [
+                        {
+                          "tag": "input",
+                          "attrs": {
+                            "type": "text",
+                            "name": "firstName",
+                            "placeholder": "First name",
+                            "required": "true",
+                            "style": "padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;"
+                          }
+                        },
+                        {
+                          "tag": "input",
+                          "attrs": {
+                            "type": "text",
+                            "name": "lastName",
+                            "placeholder": "Last name",
+                            "required": "true",
+                            "style": "padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "input",
+                      "attrs": {
+                        "type": "email",
+                        "name": "email",
+                        "placeholder": "name@company.com",
+                        "required": "true",
+                        "style": "padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;"
+                      }
+                    },
+                    {
+                      "tag": "textarea",
+                      "attrs": {
+                        "name": "message",
+                        "rows": "5",
+                        "placeholder": "How can our team assist you today?",
+                        "required": "true",
+                        "style": "padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;resize:vertical;"
+                      },
+                      "children": []
+                    },
+                    {
+                      "tag": "button",
+                      "attrs": {
+                        "type": "submit",
+                        "style": "padding:14px;background:#7c3aed;color:#ffffff;border:none;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "content": "Send Message →"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "id": "contact-page-response",
+                    "style": "margin-top:16px;"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "_id": "contact",
+    "createdAt": "2026-10-25T06:34:42.758Z",
+    "updatedAt": "2026-10-25T06:34:42.758Z"
+  }
+]
